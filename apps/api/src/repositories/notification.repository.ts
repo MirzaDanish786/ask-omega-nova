@@ -1,17 +1,26 @@
-import { prisma } from '../config/database.js';
-import type { Notification } from '@prisma/client';
+import type { Repository } from 'typeorm';
+import { AppDataSource } from '../database/data-source.js';
+import { Notification } from '../entities/index.js';
+import { createId } from '../utils/id.js';
 
 export class NotificationRepository {
+  private repo: Repository<Notification>;
+
+  constructor() {
+    this.repo = AppDataSource.getRepository(Notification);
+  }
+
   async findByUserId(userId: string, limit = 50): Promise<Notification[]> {
-    return prisma.notification.findMany({
+    return this.repo.find({
       where: { userId },
-      orderBy: { createdAt: 'desc' },
+      order: { createdAt: 'DESC' },
       take: limit,
     });
   }
 
   async markAsRead(id: string): Promise<Notification> {
-    return prisma.notification.update({ where: { id }, data: { read: true } });
+    await this.repo.update(id, { read: true });
+    return this.repo.findOneOrFail({ where: { id } });
   }
 
   async create(data: {
@@ -21,10 +30,11 @@ export class NotificationRepository {
     title: string;
     message: string;
   }): Promise<Notification> {
-    return prisma.notification.create({ data });
+    const entity = this.repo.create({ id: createId(), ...data });
+    return this.repo.save(entity);
   }
 
   async unreadCount(userId: string): Promise<number> {
-    return prisma.notification.count({ where: { userId, read: false } });
+    return this.repo.count({ where: { userId, read: false } });
   }
 }

@@ -9,8 +9,11 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as OgwiRouteImport } from './routes/ogwi'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as EarlyWarningRouteImport } from './routes/early-warning'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SimulationsIndexRouteImport } from './routes/simulations/index'
@@ -19,6 +22,16 @@ import { Route as SimulationsIdRouteImport } from './routes/simulations/$id'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminAgentsRouteImport } from './routes/admin/agents'
 
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OgwiRoute = OgwiRouteImport.update({
   id: '/ogwi',
   path: '/ogwi',
@@ -27,6 +40,11 @@ const OgwiRoute = OgwiRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EarlyWarningRoute = EarlyWarningRouteImport.update({
@@ -68,8 +86,11 @@ const AdminAgentsRoute = AdminAgentsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/early-warning': typeof EarlyWarningRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/ogwi': typeof OgwiRoute
+  '/onboarding': typeof OnboardingRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/admin/agents': typeof AdminAgentsRoute
   '/admin/users': typeof AdminUsersRoute
   '/simulations/$id': typeof SimulationsIdRoute
@@ -79,8 +100,11 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/early-warning': typeof EarlyWarningRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/ogwi': typeof OgwiRoute
+  '/onboarding': typeof OnboardingRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/admin/agents': typeof AdminAgentsRoute
   '/admin/users': typeof AdminUsersRoute
   '/simulations/$id': typeof SimulationsIdRoute
@@ -91,8 +115,11 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/early-warning': typeof EarlyWarningRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/ogwi': typeof OgwiRoute
+  '/onboarding': typeof OnboardingRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/admin/agents': typeof AdminAgentsRoute
   '/admin/users': typeof AdminUsersRoute
   '/simulations/$id': typeof SimulationsIdRoute
@@ -104,8 +131,11 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/early-warning'
+    | '/forgot-password'
     | '/login'
     | '/ogwi'
+    | '/onboarding'
+    | '/reset-password'
     | '/admin/agents'
     | '/admin/users'
     | '/simulations/$id'
@@ -115,8 +145,11 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/early-warning'
+    | '/forgot-password'
     | '/login'
     | '/ogwi'
+    | '/onboarding'
+    | '/reset-password'
     | '/admin/agents'
     | '/admin/users'
     | '/simulations/$id'
@@ -126,8 +159,11 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/early-warning'
+    | '/forgot-password'
     | '/login'
     | '/ogwi'
+    | '/onboarding'
+    | '/reset-password'
     | '/admin/agents'
     | '/admin/users'
     | '/simulations/$id'
@@ -138,8 +174,11 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EarlyWarningRoute: typeof EarlyWarningRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   OgwiRoute: typeof OgwiRoute
+  OnboardingRoute: typeof OnboardingRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   AdminAgentsRoute: typeof AdminAgentsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   SimulationsIdRoute: typeof SimulationsIdRoute
@@ -149,6 +188,20 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ogwi': {
       id: '/ogwi'
       path: '/ogwi'
@@ -161,6 +214,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/early-warning': {
@@ -218,8 +278,11 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EarlyWarningRoute: EarlyWarningRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   OgwiRoute: OgwiRoute,
+  OnboardingRoute: OnboardingRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   AdminAgentsRoute: AdminAgentsRoute,
   AdminUsersRoute: AdminUsersRoute,
   SimulationsIdRoute: SimulationsIdRoute,

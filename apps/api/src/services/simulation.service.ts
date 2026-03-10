@@ -4,7 +4,7 @@ import { KnowledgeService } from './knowledge.service.js';
 import { OgwiService } from './ogwi.service.js';
 import { openai, ASSISTANT_ID } from '../config/openai.js';
 import { AppError } from '../interfaces/base.js';
-import type { Simulation } from '@prisma/client';
+import type { Simulation } from '../entities/index.js';
 
 export class SimulationService {
   private repo = new SimulationRepository();
@@ -58,19 +58,19 @@ export class SimulationService {
     if (sim.userId !== userId) throw new AppError(403, 'Not your simulation');
     if (!sim.threadId) throw new AppError(400, 'No thread to continue');
 
-    await this.repo.update(simId, { status: 'RUNNING' });
+    await this.repo.update(simId, { status: 'RUNNING' as any });
 
     try {
       const answer = await this.executeAssistantRun(sim.threadId, message);
       const sanitized = this.sanitizeAnswer(answer.text);
 
       await this.repo.update(simId, {
-        status: 'COMPLETED',
+        status: 'COMPLETED' as any,
         answer: sanitized,
         tokensUsed: (sim.tokensUsed ?? 0) + (answer.tokensUsed ?? 0),
       });
     } catch (err) {
-      await this.repo.update(simId, { status: 'FAILED' });
+      await this.repo.update(simId, { status: 'FAILED' as any });
       throw err;
     }
 
@@ -79,7 +79,7 @@ export class SimulationService {
 
   private async runSimulation(simId: string, query: string, userId: string, userRole: string): Promise<void> {
     try {
-      await this.repo.update(simId, { status: 'RUNNING' });
+      await this.repo.update(simId, { status: 'RUNNING' as any });
 
       // KB context injection
       const relevantIds = this.kbService.findRelevantArticleIds(query);
@@ -107,7 +107,7 @@ export class SimulationService {
       const sanitized = this.sanitizeAnswer(answer.text);
 
       await this.repo.update(simId, {
-        status: 'COMPLETED',
+        status: 'COMPLETED' as any,
         threadId: thread.id,
         answer: sanitized,
         tokensUsed: answer.tokensUsed ?? 0,
@@ -115,7 +115,7 @@ export class SimulationService {
       });
     } catch (err) {
       console.error('Simulation error:', err);
-      await this.repo.update(simId, { status: 'FAILED' });
+      await this.repo.update(simId, { status: 'FAILED' as any });
     }
   }
 

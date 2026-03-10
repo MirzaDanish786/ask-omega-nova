@@ -1,6 +1,6 @@
 import { AgentRepository } from '../repositories/agent.repository.js';
 import { AppError } from '../interfaces/base.js';
-import type { AgentConfig, AgentAuditLog } from '@prisma/client';
+import type { AgentConfig, AgentAuditLog } from '../entities/index.js';
 
 export class AgentService {
   private repo = new AgentRepository();
@@ -22,7 +22,7 @@ export class AgentService {
 
     const start = Date.now();
     try {
-      await this.repo.updateStatus(agentId, 'ACTIVE');
+      await this.repo.updateStatus(agentId, 'ACTIVE' as any);
       // Agent execution would be dispatched here based on agentId
       const durationMs = Date.now() - start;
       await this.repo.createAuditLog({
@@ -35,7 +35,7 @@ export class AgentService {
     } catch (err) {
       const durationMs = Date.now() - start;
       const error = err instanceof Error ? err.message : 'Unknown error';
-      await this.repo.updateStatus(agentId, 'ERROR', error);
+      await this.repo.updateStatus(agentId, 'ERROR' as any, error);
       await this.repo.createAuditLog({
         agentId,
         action: 'manual_run',

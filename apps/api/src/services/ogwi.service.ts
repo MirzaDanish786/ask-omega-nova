@@ -8,11 +8,10 @@ import {
   type IOgwiCurrentResponse,
   type IOgwiForecastPoint,
   type IOgwiRegionalBreakdown,
-  type CrisisLevel,
 } from '@omega-nova/shared';
 import { OgwiRepository } from '../repositories/ogwi.repository.js';
 import { EarlyWarningRepository } from '../repositories/earlywarning.repository.js';
-import type { CrisisLevel as PrismaCrisisLevel } from '@prisma/client';
+import { CrisisLevel, EarlyWarningSeverity } from '../entities/index.js';
 
 export class OgwiService {
   private ogwiRepo = new OgwiRepository();
@@ -74,7 +73,7 @@ export class OgwiService {
     await this.ogwiRepo.create({
       date: new Date(),
       ogwiScore: newScore,
-      crisisLevel: crisisLevel as unknown as PrismaCrisisLevel,
+      crisisLevel: crisisLevel as unknown as CrisisLevel,
       regionalHotspots: hotspots,
       forecast: { generated: new Date().toISOString() },
       microDeltaCi: microDelta,
@@ -94,7 +93,7 @@ export class OgwiService {
       await this.ewRepo.create({
         region,
         score: Number(ewScore.toFixed(2)),
-        severity: ewSeverity as unknown as import('@prisma/client').EarlyWarningSeverity,
+        severity: ewSeverity as unknown as EarlyWarningSeverity,
         signals: { ogwiDerived: true, regionalScore },
         drivers: hotspots.includes(region) ? ['elevated_ogwi', 'regional_stress'] : [],
       });

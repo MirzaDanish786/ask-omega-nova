@@ -1,5 +1,5 @@
 import { NotificationRepository } from '../repositories/notification.repository.js';
-import type { Notification } from '@prisma/client';
+import type { Notification } from '../entities/index.js';
 
 export class NotificationService {
   private repo = new NotificationRepository();

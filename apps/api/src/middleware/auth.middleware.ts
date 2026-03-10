@@ -16,6 +16,14 @@ declare global {
   }
 }
 
+function parseModules(raw: unknown): string[] {
+  if (Array.isArray(raw)) return raw;
+  if (typeof raw === 'string') {
+    try { return JSON.parse(raw); } catch { return []; }
+  }
+  return [];
+}
+
 export async function requireAuth(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const session = await auth.api.getSession({
@@ -32,7 +40,7 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
       email: session.user.email,
       name: session.user.name,
       role: (session.user as Record<string, unknown>).role as string ?? 'VIEWER',
-      assignedModules: ((session.user as Record<string, unknown>).assignedModules as string[]) ?? [],
+      assignedModules: parseModules((session.user as Record<string, unknown>).assignedModules),
     };
 
     next();

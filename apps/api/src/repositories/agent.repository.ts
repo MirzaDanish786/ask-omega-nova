@@ -1,31 +1,53 @@
-import { prisma } from '../config/database.js';
-import type { AgentConfig, AgentAuditLog, AgentStatus } from '@prisma/client';
+import type { Repository } from 'typeorm';
+import { AppDataSource } from '../database/data-source.js';
+import { AgentConfig, AgentAuditLog, type AgentStatus } from '../entities/index.js';
+import { createId } from '../utils/id.js';
 
 export class AgentRepository {
+  private configRepo: Repository<AgentConfig>;
+  private auditRepo: Repository<AgentAuditLog>;
+
+  constructor() {
+    this.configRepo = AppDataSource.getRepository(AgentConfig);
+    this.auditRepo = AppDataSource.getRepository(AgentAuditLog);
+  }
+
   async findAll(): Promise<AgentConfig[]> {
-    return prisma.agentConfig.findMany({ orderBy: { createdAt: 'asc' } });
+    return this.configRepo.find({ order: { createdAt: 'ASC' } });
   }
 
   async findByAgentId(agentId: string): Promise<AgentConfig | null> {
-    return prisma.agentConfig.findUnique({ where: { agentId } });
+    return this.configRepo.findOne({ where: { agentId } });
   }
 
   async toggle(agentId: string, enabled: boolean): Promise<AgentConfig> {
-    return prisma.agentConfig.update({
-      where: { agentId },
-      data: { enabled, status: enabled ? 'ACTIVE' : 'DISABLED' },
-    });
+    await this.configRepo.update(
+      { agentId },
+      { enabled, status: enabled ? ('ACTIVE' as AgentStatus) : ('DISABLED' as AgentStatus) },
+    );
+    return this.findByAgentId(agentId) as Promise<AgentConfig>;
   }
 
   async updateStatus(agentId: string, status: AgentStatus, error?: string): Promise<void> {
-    await prisma.agentConfig.update({
-      where: { agentId },
-      data: {
-        status,
-        lastRunAt: new Date(),
-        ...(error ? { errorCount: { increment: 1 } } : {}),
-      },
-    });
+    const updateData: Partial<AgentConfig> = {
+      status,
+      lastRunAt: new Date(),
+    };
+
+    if (error) {
+      await this.configRepo
+        .createQueryBuilder()
+        .update(AgentConfig)
+        .set({
+          status,
+          lastRunAt: new Date(),
+          errorCount: () => '"errorCount" + 1',
+        })
+        .where('agentId = :agentId', { agentId })
+        .execute();
+    } else {
+      await this.configRepo.update({ agentId }, updateData);
+    }
   }
 
   async createAuditLog(data: {
@@ -35,13 +57,14 @@ export class AgentRepository {
     durationMs: number;
     error?: string;
   }): Promise<AgentAuditLog> {
-    return prisma.agentAuditLog.create({ data });
+    const entity = this.auditRepo.create({ id: createId(), ...data });
+    return this.auditRepo.save(entity);
   }
 
   async getAuditLogs(agentId: string, limit = 50): Promise<AgentAuditLog[]> {
-    return prisma.agentAuditLog.findMany({
+    return this.auditRepo.find({
       where: { agentId },
-      orderBy: { createdAt: 'desc' },
+      order: { createdAt: 'DESC' },
       take: limit,
     });
   }

@@ -13,9 +13,6 @@
     "typecheck": {
       "dependsOn": ["^build"]
     },
-    "db:migrate": {
-      "cache": false
-    },
     "db:seed": {
       "cache": false
     }

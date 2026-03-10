@@ -1,24 +1,34 @@
-import { prisma } from '../config/database.js';
-import type { EarlyWarningData, EarlyWarningSeverity, Prisma } from '@prisma/client';
+import type { Repository } from 'typeorm';
+import { AppDataSource } from '../database/data-source.js';
+import { EarlyWarningData, type EarlyWarningSeverity } from '../entities/index.js';
+import { createId } from '../utils/id.js';
 
 export class EarlyWarningRepository {
+  private repo: Repository<EarlyWarningData>;
+
+  constructor() {
+    this.repo = AppDataSource.getRepository(EarlyWarningData);
+  }
+
   async getLatestByRegion(): Promise<EarlyWarningData[]> {
     const regions = ['Americas', 'Europe', 'Middle East', 'Africa', 'APAC'];
     const results: EarlyWarningData[] = [];
+
     for (const region of regions) {
-      const latest = await prisma.earlyWarningData.findFirst({
+      const latest = await this.repo.findOne({
         where: { region },
-        orderBy: { createdAt: 'desc' },
+        order: { createdAt: 'DESC' },
       });
       if (latest) results.push(latest);
     }
+
     return results;
   }
 
   async getHistory(params: { region?: string; limit?: number }): Promise<EarlyWarningData[]> {
-    return prisma.earlyWarningData.findMany({
+    return this.repo.find({
       where: params.region ? { region: params.region } : {},
-      orderBy: { createdAt: 'desc' },
+      order: { createdAt: 'DESC' },
       take: params.limit ?? 100,
     });
   }
@@ -27,9 +37,10 @@ export class EarlyWarningRepository {
     region: string;
     score: number;
     severity: EarlyWarningSeverity;
-    signals?: Prisma.InputJsonValue;
+    signals?: Record<string, unknown>;
     drivers?: string[];
   }): Promise<EarlyWarningData> {
-    return prisma.earlyWarningData.create({ data });
+    const entity = this.repo.create({ id: createId(), ...data });
+    return this.repo.save(entity);
   }
 }

@@ -1,6 +1,9 @@
 import { createRootRouteWithContext, Outlet, Link, useNavigate, useLocation } from '@tanstack/react-router';
 import type { QueryClient } from '@tanstack/react-query';
 import { useSession, signOut } from '../lib/auth-client';
+import { useEffect, useState } from 'react';
+import { api } from '../lib/api';
+import { Loader2, LogOut } from 'lucide-react';
 
 export interface RouterContext {
   queryClient: QueryClient;
@@ -10,35 +13,71 @@ export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootLayout,
 });
 
+// Pages that don't require authentication or sidebar
+const PUBLIC_PAGES = ['/login', '/forgot-password', '/reset-password'];
+
 function RootLayout() {
   const { data: session, isPending } = useSession();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const isLoginPage = location.pathname === '/login';
+  const isPublicPage = PUBLIC_PAGES.includes(location.pathname);
+  const isOnboardingPage = location.pathname === '/onboarding';
+
+  // Fetch full user data (with onboarding status) for authenticated users
+  const [userData, setUserData] = useState<Record<string, unknown> | null>(null);
+  const [userLoading, setUserLoading] = useState(false);
+
+  useEffect(() => {
+    if (session?.user && !isPublicPage) {
+      setUserLoading(true);
+      api.get<Record<string, unknown>>('/users/me')
+        .then(data => setUserData(data))
+        .catch(() => {})
+        .finally(() => setUserLoading(false));
+    }
+  }, [session?.user?.id, isPublicPage]);
 
   if (isPending) {
     return (
-      <div className="flex h-screen items-center justify-center bg-background">
-        <div className="text-muted-foreground">Loading...</div>
+      <div className="flex h-screen items-center justify-center bg-[#0a0f1a]">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
       </div>
     );
   }
 
-  // Not authenticated: show login page directly, redirect other pages to /login
+  // Not authenticated: show public pages directly, redirect others to /login
   if (!session?.user) {
-    if (isLoginPage) return <Outlet />;
+    if (isPublicPage) return <Outlet />;
     navigate({ to: '/login' });
     return null;
   }
 
-  // Authenticated but on login page: redirect to dashboard
-  if (isLoginPage) {
+  // Authenticated but on a public page: redirect to dashboard
+  if (isPublicPage) {
     navigate({ to: '/' });
     return null;
   }
 
-  const userRole = (session.user as Record<string, unknown>).role as string;
+  // Onboarding page renders without sidebar
+  if (isOnboardingPage) return <Outlet />;
+
+  // Wait for user data before checking onboarding
+  if (userLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-[#0a0f1a]">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+      </div>
+    );
+  }
+
+  // Check if user needs onboarding (skip for admins)
+  const userRole = (userData?.role ?? (session.user as Record<string, unknown>).role) as string;
+  const onboardingCompleted = userData?.onboardingCompleted as boolean | undefined;
+  if (userRole !== 'ADMIN' && onboardingCompleted === false) {
+    navigate({ to: '/onboarding' });
+    return null;
+  }
 
   return (
     <div className="flex h-screen bg-background">
@@ -68,8 +107,9 @@ function RootLayout() {
           <div className="text-xs text-muted-foreground mt-0.5 capitalize">{userRole?.toLowerCase()}</div>
           <button
             onClick={() => signOut().then(() => navigate({ to: '/login' }))}
-            className="mt-2 text-xs text-destructive hover:underline"
+            className="mt-2 flex items-center gap-1.5 text-xs text-destructive hover:underline"
           >
+            <LogOut className="w-3 h-3" />
             Sign out
           </button>
         </div>

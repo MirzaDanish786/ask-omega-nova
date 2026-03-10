@@ -5,13 +5,13 @@
 - **Backend**: Express.js + TypeScript (`apps/api`)
 - **Frontend**: React + Vite + TypeScript (`apps/web`)
 - **Shared**: Types, constants, utils (`packages/shared` → `@omega-nova/shared`)
-- **Database**: PostgreSQL + Prisma ORM
-- **Auth**: BetterAuth with Prisma adapter
+- **Database**: PostgreSQL + TypeORM
+- **Auth**: BetterAuth with PostgreSQL adapter
 
 ## Code Style
 - **TypeScript strict mode** everywhere
 - **Classes with interfaces** — no loose functions for services/repos/controllers
-- **Pattern**: Controller → Service → Repository → Prisma
+- **Pattern**: Controller → Service → Repository → TypeORM
 - **Naming**: PascalCase for classes/interfaces, camelCase for methods/variables
 - **Imports**: Use `@omega-nova/shared` for shared types, never relative cross-package imports
 
@@ -20,10 +20,13 @@
 routes/         → Define Express routes, apply middleware
 controllers/    → Parse request, call service, send response
 services/       → Business logic, orchestration
-repositories/   → Data access only (Prisma queries)
+repositories/   → Data access only (TypeORM queries)
+entities/       → TypeORM entity classes with decorators
+database/       → DataSource configuration, seed script
 interfaces/     → IRepository, IService, IController contracts
 middleware/     → Auth, RBAC, validation, error handling
-config/        → Environment, database, auth, OpenAI setup
+config/        → Environment, auth, OpenAI setup
+utils/         → ID generation, helpers
 ```
 
 ### Middleware Chain
@@ -44,9 +47,10 @@ Request → CORS → Logger → JSON → Rate Limiter → Auth → RBAC → Zod 
 - **API calls**: Centralized API client with auth headers
 
 ## Database
-- **Prisma schema** at `apps/api/prisma/schema.prisma`
-- Migrations: `npx prisma migrate dev` from `apps/api`
-- Seed: `npx prisma db seed` from `apps/api`
+- **TypeORM entities** at `apps/api/src/entities/`
+- **DataSource config** at `apps/api/src/database/data-source.ts`
+- Synchronize: enabled in development (`synchronize: true`)
+- Seed: `npm run db:seed` from `apps/api`
 
 ## Key Domain Concepts
 - **OGWI**: Omega GlobalWatch Index (1-5 scale, crisis levels)
@@ -72,9 +76,20 @@ Request → CORS → Logger → JSON → Rate Limiter → Auth → RBAC → Zod 
 ## Commands
 - `npm run dev` — Start all apps in dev mode
 - `npm run build` — Build all packages
-- `cd apps/api && npx prisma migrate dev` — Run migrations
-- `cd apps/api && npx prisma db seed` — Seed database
+- `cd apps/api && npm run db:seed` — Seed database
 - `docker-compose up postgres` — Start PostgreSQL only
+
+## Reference Project
+- **Always reference `omega-nova-old`** for UI design, features, and user flows
+- We are rebuilding the same product with a new tech stack
+- The UI should match the old project's look and feel (dark military/defense theme)
+- Old project path: `E:/Mercury sols/omega-nova/omega-nova-old/ask-omega-nova/`
+
+## UI Components
+- **shadcn/ui** components in `apps/web/src/components/ui/`
+- `components.json` configured at `apps/web/components.json`
+- Always use shadcn/ui components (Button, Card, Input, Label, Badge, Progress, etc.)
+- Import from `@/components/ui/<component>`
 
 ## Session Continuity
 - Check `omega-nova-progress.md` at start of every session

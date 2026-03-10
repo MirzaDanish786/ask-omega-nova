@@ -1,5 +1,5 @@
 import { KnowledgeRepository } from '../repositories/knowledge.repository.js';
-import type { KnowledgeBaseArticle } from '@prisma/client';
+import type { KnowledgeBaseArticle } from '../entities/index.js';
 
 // Keyword-to-article ID mapping (ported from old project's askOmega.ts)
 const KB_KEYWORD_MAP: Record<string, string[]> = {

@@ -1,6 +1,6 @@
 # Omega Nova - Daily Progress Tracker
 
-## Current Status: Steps 1-12 Complete, Docker & TypeScript Fixes Done
+## Current Status: Steps 1-12 Complete, Migrated from Prisma to TypeORM
 
 ## Completed
 ### 2026-03-09 (Session 1)
@@ -86,9 +86,27 @@ Move to the next module — choose from: OGWI dashboard frontend, Simulations, o
 - Early Warning: frontend visualization
 - Production deployment (Docker Compose full stack)
 
+### 2026-03-10 (Session 4) — Prisma → TypeORM Migration
+- [x] Replaced Prisma ORM with TypeORM across entire backend
+- [x] Created 14 TypeORM entity classes with decorators (`src/entities/`)
+- [x] Created `src/database/data-source.ts` — centralized DataSource config
+- [x] Created `src/database/index.ts` — initialization module
+- [x] Created `src/utils/id.ts` — cuid-like ID generation
+- [x] Rewrote all 7 repositories to use TypeORM Repository pattern
+- [x] Updated all 6 services to import types from entities (not @prisma/client)
+- [x] Updated auth config: switched from prismaAdapter to native postgres adapter
+- [x] Updated main index.ts: async bootstrap with DB initialization before server start
+- [x] Rewrote seed script using TypeORM (`src/database/seed.ts`)
+- [x] Removed all Prisma files: schema.prisma, prisma.config.ts, prisma/ directory
+- [x] Uninstalled @prisma/client and prisma packages
+- [x] Updated tsconfig.json: experimentalDecorators, emitDecoratorMetadata, strictPropertyInitialization
+- [x] Updated CLAUDE.md, package.json scripts, turbo.json
+- [x] Full monorepo typecheck passes (4/4 tasks, zero errors)
+
 ## Architecture Decisions
 - Turborepo monorepo with npm workspaces
-- Controller → Service → Repository → Prisma pattern
+- Controller → Service → Repository → TypeORM pattern
+- TypeORM entities with decorators, synchronize in dev mode
 - BetterAuth for authentication (session-based)
 - TanStack Router for type-safe frontend routing
 - Zod for runtime validation on API boundaries

@@ -8,3 +8,13 @@ export const authClient = createAuthClient({
 });
 
 export const { useSession, signIn, signUp, signOut } = authClient;
+
+// Password reset helpers — these exist at runtime but BetterAuth types may not expose them directly
+export const forgetPassword = (authClient as any).forgetPassword as (opts: {
+  email: string;
+  redirectTo?: string;
+}) => Promise<{ error?: { message?: string } }>;
+
+export const resetPassword = (authClient as any).resetPassword as (opts: {
+  newPassword: string;
+}) => Promise<{ error?: { message?: string } }>;

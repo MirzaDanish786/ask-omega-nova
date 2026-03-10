@@ -1,6 +1,6 @@
 import { UserRepository } from '../repositories/user.repository.js';
 import { AppError } from '../interfaces/base.js';
-import type { User, UserRole } from '@prisma/client';
+import { type User, type UserRole } from '../entities/index.js';
 
 export class UserService {
   private repo = new UserRepository();
@@ -29,7 +29,13 @@ export class UserService {
     return this.repo.updateModules(id, modules);
   }
 
-  async updateProfile(id: string, data: { name?: string }): Promise<User> {
+  async updateProfile(id: string, data: {
+    name?: string;
+    onboardingCompleted?: boolean;
+    accessLevel?: string;
+    apiMode?: string;
+    alertsEnabled?: boolean;
+  }): Promise<User> {
     return this.repo.updateProfile(id, data);
   }
 

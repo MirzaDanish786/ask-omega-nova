@@ -1,57 +1,84 @@
-import { prisma } from '../config/database.js';
-import type { User, UserRole } from '@prisma/client';
+import type { Repository } from 'typeorm';
+import { AppDataSource } from '../database/data-source.js';
+import { User, type UserRole } from '../entities/index.js';
 
-// Fields safe to return in API responses (excludes nothing from User table,
-// but we exclude the Account table's password hash via select)
-const USER_SELECT = {
-  id: true,
-  email: true,
-  emailVerified: true,
-  name: true,
-  image: true,
-  role: true,
-  assignedModules: true,
-  companyId: true,
-  monthlySimCount: true,
-  simRateLimit: true,
-  createdAt: true,
-  updatedAt: true,
-} as const;
+const USER_SELECT_COLUMNS: (keyof User)[] = [
+  'id',
+  'email',
+  'emailVerified',
+  'name',
+  'image',
+  'role',
+  'assignedModules',
+  'companyId',
+  'monthlySimCount',
+  'simRateLimit',
+  'onboardingCompleted',
+  'accessLevel',
+  'apiMode',
+  'alertsEnabled',
+  'createdAt',
+  'updatedAt',
+];
 
 export class UserRepository {
+  private repo: Repository<User>;
+
+  constructor() {
+    this.repo = AppDataSource.getRepository(User);
+  }
+
   async findById(id: string): Promise<User | null> {
-    return prisma.user.findUnique({ where: { id }, select: USER_SELECT });
+    return this.repo.findOne({
+      where: { id },
+      select: USER_SELECT_COLUMNS,
+    });
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return prisma.user.findUnique({ where: { email }, select: USER_SELECT });
+    return this.repo.findOne({
+      where: { email },
+      select: USER_SELECT_COLUMNS,
+    });
   }
 
   async findMany(): Promise<User[]> {
-    return prisma.user.findMany({ orderBy: { createdAt: 'desc' }, select: USER_SELECT });
+    return this.repo.find({
+      order: { createdAt: 'DESC' },
+      select: USER_SELECT_COLUMNS,
+    });
   }
 
   async updateRole(id: string, role: UserRole): Promise<User> {
-    return prisma.user.update({ where: { id }, data: { role }, select: USER_SELECT });
+    await this.repo.update(id, { role });
+    return this.findById(id) as Promise<User>;
   }
 
   async updateModules(id: string, modules: string[]): Promise<User> {
-    return prisma.user.update({ where: { id }, data: { assignedModules: modules }, select: USER_SELECT });
+    await this.repo.update(id, { assignedModules: JSON.stringify(modules) });
+    return this.findById(id) as Promise<User>;
   }
 
-  async updateProfile(id: string, data: { name?: string }): Promise<User> {
-    return prisma.user.update({ where: { id }, data, select: USER_SELECT });
+  async updateProfile(id: string, data: {
+    name?: string;
+    onboardingCompleted?: boolean;
+    accessLevel?: string;
+    apiMode?: string;
+    alertsEnabled?: boolean;
+  }): Promise<User> {
+    await this.repo.update(id, data);
+    return this.findById(id) as Promise<User>;
   }
 
   async incrementSimCount(id: string): Promise<void> {
-    await prisma.user.update({ where: { id }, data: { monthlySimCount: { increment: 1 } } });
+    await this.repo.increment({ id }, 'monthlySimCount', 1);
   }
 
   async resetAllSimCounts(): Promise<void> {
-    await prisma.user.updateMany({ data: { monthlySimCount: 0 } });
+    await this.repo.update({}, { monthlySimCount: 0 });
   }
 
   async count(): Promise<number> {
-    return prisma.user.count();
+    return this.repo.count();
   }
 }

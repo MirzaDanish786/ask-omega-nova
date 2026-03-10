@@ -1,15 +1,23 @@
-import { prisma } from '../config/database.js';
-import type { Simulation, SimulationStatus } from '@prisma/client';
+import type { Repository } from 'typeorm';
+import { AppDataSource } from '../database/data-source.js';
+import { Simulation, type SimulationStatus } from '../entities/index.js';
+import { createId } from '../utils/id.js';
 
 export class SimulationRepository {
+  private repo: Repository<Simulation>;
+
+  constructor() {
+    this.repo = AppDataSource.getRepository(Simulation);
+  }
+
   async findById(id: string): Promise<Simulation | null> {
-    return prisma.simulation.findUnique({ where: { id } });
+    return this.repo.findOne({ where: { id } });
   }
 
   async findByUserId(userId: string, limit = 50): Promise<Simulation[]> {
-    return prisma.simulation.findMany({
+    return this.repo.find({
       where: { userId },
-      orderBy: { createdAt: 'desc' },
+      order: { createdAt: 'DESC' },
       take: limit,
     });
   }
@@ -20,7 +28,8 @@ export class SimulationRepository {
     status?: SimulationStatus;
     ogwiSnapshot?: number;
   }): Promise<Simulation> {
-    return prisma.simulation.create({ data });
+    const entity = this.repo.create({ id: createId(), ...data });
+    return this.repo.save(entity);
   }
 
   async update(id: string, data: {
@@ -30,14 +39,15 @@ export class SimulationRepository {
     tokensUsed?: number;
     kbArticlesUsed?: string[];
   }): Promise<Simulation> {
-    return prisma.simulation.update({ where: { id }, data });
+    await this.repo.update(id, data);
+    return this.findById(id) as Promise<Simulation>;
   }
 
   async count(): Promise<number> {
-    return prisma.simulation.count();
+    return this.repo.count();
   }
 
   async countByUser(userId: string): Promise<number> {
-    return prisma.simulation.count({ where: { userId } });
+    return this.repo.count({ where: { userId } });
   }
 }
