@@ -1,11 +1,7 @@
-import { createFileRoute, Navigate, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, Navigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useSession } from '../lib/auth-client';
 import { api } from '../lib/api';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import {
   Shield,
   BookOpen,
@@ -36,39 +32,38 @@ function OnboardingStep({
   const isCompleted = step < currentStep;
 
   return (
-    <Card
-      className={`transition-all duration-500 ${
+    <div
+      className={`rounded-xl border transition-all duration-500 ${
         isActive
-          ? 'border-blue-500/40 bg-[#0d1525] shadow-lg shadow-blue-500/5'
+          ? 'border-slate-300 bg-white shadow-lg'
           : isCompleted
-            ? 'border-green-500/20 bg-[#0d1525]/50'
-            : 'border-slate-700/30 bg-[#0d1525]/30'
+            ? 'border-green-200 bg-green-50/50'
+            : 'border-slate-200 bg-slate-50/50'
       }`}
     >
-      <CardHeader className="pb-0">
-        <CardTitle className="flex items-center gap-3 text-base">
-          {isCompleted ? (
-            <CheckCircle className="w-6 h-6 text-green-400 flex-shrink-0" />
-          ) : (
-            <div
-              className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
-                isActive ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-400'
-              }`}
-            >
-              {step}
-            </div>
-          )}
-          <span className={isActive ? 'text-white' : 'text-slate-400'}>{title}</span>
-        </CardTitle>
-      </CardHeader>
-      {isActive && <CardContent className="pt-4">{children}</CardContent>}
-    </Card>
+      <div className="p-5 flex items-center gap-3">
+        {isCompleted ? (
+          <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
+        ) : (
+          <div
+            className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
+              isActive ? 'bg-slate-900 text-white' : 'bg-slate-200 text-slate-500'
+            }`}
+          >
+            {step}
+          </div>
+        )}
+        <span className={`font-semibold ${isActive ? 'text-slate-800' : 'text-slate-500'}`}>
+          {title}
+        </span>
+      </div>
+      {isActive && <div className="px-5 pb-5 pt-1">{children}</div>}
+    </div>
   );
 }
 
 function OnboardingPage() {
   const { data: session, isPending } = useSession();
-  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedAccessLevel, setSelectedAccessLevel] = useState('Operator');
   const [selectedApiMode, setSelectedApiMode] = useState('Efficient');
@@ -77,8 +72,8 @@ function OnboardingPage() {
 
   if (isPending) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0f1a]">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 to-slate-100">
+        <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
       </div>
     );
   }
@@ -109,17 +104,17 @@ function OnboardingPage() {
   const progress = (currentStep / 4) * 100;
 
   return (
-    <div className="min-h-screen bg-[#0a0f1a] text-white">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
       <div className="max-w-4xl mx-auto px-6 py-12 space-y-8">
         {/* Welcome Header */}
         <div className="text-center">
-          <div className="mx-auto w-20 h-20 rounded-xl flex items-center justify-center mb-6 bg-gradient-to-br from-[#0f2438] to-[#17314d] border border-blue-500/20 shadow-lg shadow-blue-500/10">
-            <Shield className="w-10 h-10 text-blue-400" />
+          <div className="mx-auto w-20 h-20 rounded-full flex items-center justify-center mb-5 bg-slate-900">
+            <Shield className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl font-bold text-white tracking-tight">
-            Welcome to Omega Nova
+          <h1 className="text-3xl font-bold text-slate-800">
+            Welcome to Ask Omega Nova
           </h1>
-          <p className="text-lg text-slate-400 mt-2">
+          <p className="text-slate-500 mt-2">
             Initial system configuration and operator onboarding.
           </p>
         </div>
@@ -127,146 +122,148 @@ function OnboardingPage() {
         {/* Progress Bar */}
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-slate-400 text-sm font-medium">Onboarding Progress</span>
-            <span className="text-slate-400 text-sm font-mono">{currentStep} / 4</span>
+            <span className="text-slate-500 text-sm font-medium">Onboarding Progress</span>
+            <span className="text-slate-500 text-sm font-mono">{currentStep} / 4</span>
           </div>
-          <Progress value={progress} className="h-2 bg-slate-800" />
+          <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-slate-900 rounded-full transition-all duration-500"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
         </div>
 
         {/* Onboarding Steps */}
         <div className="max-w-2xl mx-auto space-y-4">
           {/* Step 1: Introduction */}
           <OnboardingStep step={1} currentStep={currentStep} title="Introduction & System Overview">
-            <p className="text-slate-400 mb-4">
+            <p className="text-slate-600 mb-4">
               Omega Nova is a predictive simulation system for geopolitical intelligence analysis.
               Please review the terms of service before proceeding.
             </p>
-            <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg border border-slate-700/50">
+            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200">
               <div className="flex items-center gap-3">
-                <BookOpen className="w-5 h-5 text-blue-400" />
-                <span className="font-medium text-slate-200">
+                <BookOpen className="w-5 h-5 text-slate-600" />
+                <span className="font-medium text-slate-700 text-sm">
                   Terms of Service & Operational Protocols
                 </span>
               </div>
-              <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-700/50">
+              <button className="px-3 py-1.5 text-sm rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100 transition-colors">
                 View Document
-              </Button>
+              </button>
             </div>
-            <Button
+            <button
               onClick={nextStep}
-              className="w-full mt-6 bg-blue-600 hover:bg-blue-500"
-              size="lg"
+              className="w-full mt-6 py-2.5 rounded-lg bg-slate-900 text-white font-medium hover:bg-slate-800 transition-all flex items-center justify-center gap-2 text-sm"
             >
               Acknowledge & Continue
               <ArrowRight className="w-4 h-4" />
-            </Button>
+            </button>
           </OnboardingStep>
 
           {/* Step 2: Operator Profile */}
           <OnboardingStep step={2} currentStep={currentStep} title="Operator Profile Setup">
-            <p className="text-slate-400 mb-4">
+            <p className="text-slate-600 mb-4">
               Select your primary operational role. This tailors the interface to your needs.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {['Analyst', 'Operator', 'Commander'].map(level => (
-                <Button
+                <button
                   key={level}
                   onClick={() => setSelectedAccessLevel(level)}
-                  variant={selectedAccessLevel === level ? 'default' : 'outline'}
-                  className={`h-14 ${
+                  className={`h-14 flex items-center justify-center gap-2 rounded-lg border text-sm font-medium transition-all ${
                     selectedAccessLevel === level
-                      ? 'bg-blue-600 hover:bg-blue-500 border-blue-500'
-                      : 'bg-slate-800/50 border-slate-700/50 text-slate-300 hover:bg-slate-700/50'
+                      ? 'bg-slate-900 border-slate-900 text-white'
+                      : 'bg-white border-slate-300 text-slate-600 hover:bg-slate-50'
                   }`}
                 >
                   <UserCheck className="w-4 h-4" />
                   {level}
-                </Button>
+                </button>
               ))}
             </div>
-            <Button
+            <button
               onClick={nextStep}
-              className="w-full mt-6 bg-blue-600 hover:bg-blue-500"
-              size="lg"
+              className="w-full mt-6 py-2.5 rounded-lg bg-slate-900 text-white font-medium hover:bg-slate-800 transition-all flex items-center justify-center gap-2 text-sm"
             >
               Set Profile & Continue
               <ArrowRight className="w-4 h-4" />
-            </Button>
+            </button>
           </OnboardingStep>
 
           {/* Step 3: System Preferences */}
           <OnboardingStep step={3} currentStep={currentStep} title="System Preferences">
             <div className="space-y-6">
               <div>
-                <h4 className="font-semibold text-white mb-1">API Mode</h4>
-                <p className="text-slate-400 text-sm mb-3">
+                <h4 className="font-semibold text-slate-800 mb-1">API Mode</h4>
+                <p className="text-slate-500 text-sm mb-3">
                   Choose how the system processes data. Efficient mode is recommended for most users.
                 </p>
                 <div className="flex gap-3">
                   {['Efficient', 'Real-Time'].map(mode => (
-                    <Button
+                    <button
                       key={mode}
                       onClick={() => setSelectedApiMode(mode)}
-                      variant={selectedApiMode === mode ? 'default' : 'outline'}
-                      className={`flex-1 ${
+                      className={`flex-1 py-2.5 flex items-center justify-center gap-2 rounded-lg border text-sm font-medium transition-all ${
                         selectedApiMode === mode
-                          ? 'bg-blue-600 hover:bg-blue-500 border-blue-500'
-                          : 'bg-slate-800/50 border-slate-700/50 text-slate-300 hover:bg-slate-700/50'
+                          ? 'bg-slate-900 border-slate-900 text-white'
+                          : 'bg-white border-slate-300 text-slate-600 hover:bg-slate-50'
                       }`}
                     >
                       <Server className="w-4 h-4" />
                       {mode}
-                    </Button>
+                    </button>
                   ))}
                 </div>
               </div>
 
               <div>
-                <h4 className="font-semibold text-white mb-1">Alert Notifications</h4>
-                <p className="text-slate-400 text-sm mb-3">
+                <h4 className="font-semibold text-slate-800 mb-1">Alert Notifications</h4>
+                <p className="text-slate-500 text-sm mb-3">
                   Enable or disable real-time notifications for critical threat alerts.
                 </p>
-                <Button
+                <button
                   onClick={() => setAlertsEnabled(!alertsEnabled)}
-                  variant={alertsEnabled ? 'default' : 'outline'}
-                  className={`w-full ${
+                  className={`w-full py-2.5 flex items-center justify-center gap-2 rounded-lg border text-sm font-medium transition-all ${
                     alertsEnabled
-                      ? 'bg-blue-600 hover:bg-blue-500 border-blue-500'
-                      : 'bg-slate-800/50 border-slate-700/50 text-slate-300 hover:bg-slate-700/50'
+                      ? 'bg-slate-900 border-slate-900 text-white'
+                      : 'bg-white border-slate-300 text-slate-600'
                   }`}
                 >
                   <Bell className="w-4 h-4" />
                   {alertsEnabled ? 'Alerts Enabled' : 'Alerts Disabled'}
-                </Button>
+                </button>
               </div>
             </div>
-            <Button
+            <button
               onClick={nextStep}
-              className="w-full mt-6 bg-blue-600 hover:bg-blue-500"
-              size="lg"
+              className="w-full mt-6 py-2.5 rounded-lg bg-slate-900 text-white font-medium hover:bg-slate-800 transition-all flex items-center justify-center gap-2 text-sm"
             >
               Save Preferences & Continue
               <ArrowRight className="w-4 h-4" />
-            </Button>
+            </button>
           </OnboardingStep>
 
           {/* Step 4: Final Confirmation */}
           <OnboardingStep step={4} currentStep={currentStep} title="Final Confirmation">
-            <p className="text-slate-400 mb-4">
+            <p className="text-slate-600 mb-4">
               You are now ready to access the Strategic Command interface. Your clearance level is
-              set to <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30">{selectedAccessLevel}</Badge>.
+              set to{' '}
+              <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-sm font-semibold border border-slate-200">
+                {selectedAccessLevel}
+              </span>
+              .
             </p>
-            <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg text-center">
-              <h3 className="text-green-400 font-bold text-lg">Onboarding Complete</h3>
-              <p className="text-green-400/70 text-sm mt-1">
+            <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-center">
+              <h3 className="text-green-700 font-bold text-lg">Onboarding Complete</h3>
+              <p className="text-green-600 text-sm mt-1">
                 Click below to enter the platform.
               </p>
             </div>
-            <Button
+            <button
               onClick={completeOnboarding}
               disabled={loading}
-              className="w-full mt-6 bg-green-600 hover:bg-green-500"
-              size="lg"
+              className="w-full mt-6 py-2.5 rounded-lg bg-green-600 text-white font-medium hover:bg-green-500 disabled:opacity-50 transition-all flex items-center justify-center gap-2 text-sm"
             >
               {loading ? (
                 <>
@@ -279,7 +276,7 @@ function OnboardingPage() {
                   Enter Strategic Command
                 </>
               )}
-            </Button>
+            </button>
           </OnboardingStep>
         </div>
       </div>
