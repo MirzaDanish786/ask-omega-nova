@@ -9,10 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TravelRouteImport } from './routes/travel'
+import { Route as SrmRouteImport } from './routes/srm'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as OgwiRouteImport } from './routes/ogwi'
+import { Route as MyActivitiesRouteImport } from './routes/my-activities'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as GlobalPerspectivesRouteImport } from './routes/global-perspectives'
+import { Route as GlobalRouteImport } from './routes/global'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as EarlyWarningRouteImport } from './routes/early-warning'
 import { Route as IndexRouteImport } from './routes/index'
@@ -22,6 +27,16 @@ import { Route as SimulationsIdRouteImport } from './routes/simulations/$id'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminAgentsRouteImport } from './routes/admin/agents'
 
+const TravelRoute = TravelRouteImport.update({
+  id: '/travel',
+  path: '/travel',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SrmRoute = SrmRouteImport.update({
+  id: '/srm',
+  path: '/srm',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
@@ -37,9 +52,24 @@ const OgwiRoute = OgwiRouteImport.update({
   path: '/ogwi',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MyActivitiesRoute = MyActivitiesRouteImport.update({
+  id: '/my-activities',
+  path: '/my-activities',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GlobalPerspectivesRoute = GlobalPerspectivesRouteImport.update({
+  id: '/global-perspectives',
+  path: '/global-perspectives',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GlobalRoute = GlobalRouteImport.update({
+  id: '/global',
+  path: '/global',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
@@ -87,10 +117,15 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/early-warning': typeof EarlyWarningRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/global': typeof GlobalRoute
+  '/global-perspectives': typeof GlobalPerspectivesRoute
   '/login': typeof LoginRoute
+  '/my-activities': typeof MyActivitiesRoute
   '/ogwi': typeof OgwiRoute
   '/onboarding': typeof OnboardingRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/srm': typeof SrmRoute
+  '/travel': typeof TravelRoute
   '/admin/agents': typeof AdminAgentsRoute
   '/admin/users': typeof AdminUsersRoute
   '/simulations/$id': typeof SimulationsIdRoute
@@ -101,10 +136,15 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/early-warning': typeof EarlyWarningRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/global': typeof GlobalRoute
+  '/global-perspectives': typeof GlobalPerspectivesRoute
   '/login': typeof LoginRoute
+  '/my-activities': typeof MyActivitiesRoute
   '/ogwi': typeof OgwiRoute
   '/onboarding': typeof OnboardingRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/srm': typeof SrmRoute
+  '/travel': typeof TravelRoute
   '/admin/agents': typeof AdminAgentsRoute
   '/admin/users': typeof AdminUsersRoute
   '/simulations/$id': typeof SimulationsIdRoute
@@ -116,10 +156,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/early-warning': typeof EarlyWarningRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/global': typeof GlobalRoute
+  '/global-perspectives': typeof GlobalPerspectivesRoute
   '/login': typeof LoginRoute
+  '/my-activities': typeof MyActivitiesRoute
   '/ogwi': typeof OgwiRoute
   '/onboarding': typeof OnboardingRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/srm': typeof SrmRoute
+  '/travel': typeof TravelRoute
   '/admin/agents': typeof AdminAgentsRoute
   '/admin/users': typeof AdminUsersRoute
   '/simulations/$id': typeof SimulationsIdRoute
@@ -132,10 +177,15 @@ export interface FileRouteTypes {
     | '/'
     | '/early-warning'
     | '/forgot-password'
+    | '/global'
+    | '/global-perspectives'
     | '/login'
+    | '/my-activities'
     | '/ogwi'
     | '/onboarding'
     | '/reset-password'
+    | '/srm'
+    | '/travel'
     | '/admin/agents'
     | '/admin/users'
     | '/simulations/$id'
@@ -146,10 +196,15 @@ export interface FileRouteTypes {
     | '/'
     | '/early-warning'
     | '/forgot-password'
+    | '/global'
+    | '/global-perspectives'
     | '/login'
+    | '/my-activities'
     | '/ogwi'
     | '/onboarding'
     | '/reset-password'
+    | '/srm'
+    | '/travel'
     | '/admin/agents'
     | '/admin/users'
     | '/simulations/$id'
@@ -160,10 +215,15 @@ export interface FileRouteTypes {
     | '/'
     | '/early-warning'
     | '/forgot-password'
+    | '/global'
+    | '/global-perspectives'
     | '/login'
+    | '/my-activities'
     | '/ogwi'
     | '/onboarding'
     | '/reset-password'
+    | '/srm'
+    | '/travel'
     | '/admin/agents'
     | '/admin/users'
     | '/simulations/$id'
@@ -175,10 +235,15 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EarlyWarningRoute: typeof EarlyWarningRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
+  GlobalRoute: typeof GlobalRoute
+  GlobalPerspectivesRoute: typeof GlobalPerspectivesRoute
   LoginRoute: typeof LoginRoute
+  MyActivitiesRoute: typeof MyActivitiesRoute
   OgwiRoute: typeof OgwiRoute
   OnboardingRoute: typeof OnboardingRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  SrmRoute: typeof SrmRoute
+  TravelRoute: typeof TravelRoute
   AdminAgentsRoute: typeof AdminAgentsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   SimulationsIdRoute: typeof SimulationsIdRoute
@@ -188,6 +253,20 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/travel': {
+      id: '/travel'
+      path: '/travel'
+      fullPath: '/travel'
+      preLoaderRoute: typeof TravelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/srm': {
+      id: '/srm'
+      path: '/srm'
+      fullPath: '/srm'
+      preLoaderRoute: typeof SrmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
@@ -209,11 +288,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OgwiRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/my-activities': {
+      id: '/my-activities'
+      path: '/my-activities'
+      fullPath: '/my-activities'
+      preLoaderRoute: typeof MyActivitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/global-perspectives': {
+      id: '/global-perspectives'
+      path: '/global-perspectives'
+      fullPath: '/global-perspectives'
+      preLoaderRoute: typeof GlobalPerspectivesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/global': {
+      id: '/global'
+      path: '/global'
+      fullPath: '/global'
+      preLoaderRoute: typeof GlobalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/forgot-password': {
@@ -279,10 +379,15 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EarlyWarningRoute: EarlyWarningRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  GlobalRoute: GlobalRoute,
+  GlobalPerspectivesRoute: GlobalPerspectivesRoute,
   LoginRoute: LoginRoute,
+  MyActivitiesRoute: MyActivitiesRoute,
   OgwiRoute: OgwiRoute,
   OnboardingRoute: OnboardingRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  SrmRoute: SrmRoute,
+  TravelRoute: TravelRoute,
   AdminAgentsRoute: AdminAgentsRoute,
   AdminUsersRoute: AdminUsersRoute,
   SimulationsIdRoute: SimulationsIdRoute,
