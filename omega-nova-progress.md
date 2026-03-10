@@ -1,0 +1,97 @@
+# Omega Nova - Daily Progress Tracker
+
+## Current Status: Steps 1-12 Complete, Docker & TypeScript Fixes Done
+
+## Completed
+### 2026-03-09 (Session 1)
+- [x] Root package.json with npm workspaces + Turborepo
+- [x] turbo.json with build/dev/lint/typecheck/db pipelines
+- [x] tsconfig.base.json with strict TypeScript
+- [x] docker-compose.yml (PostgreSQL 16 + API + Web services)
+- [x] .env.example, .gitignore, .env
+- [x] packages/shared (@omega-nova/shared):
+  - Types: user, ogwi, simulation, agent
+  - Constants: roles, OGWI thresholds, regional variance
+  - Utils: can() permission helper, isAdmin()
+- [x] CLAUDE.md with project conventions
+- [x] Step 2: Backend Foundation (Express + TypeScript, Prisma schema, middleware chain)
+- [x] Step 3: Authentication (BetterAuth with Prisma adapter)
+- [x] Step 4: OGWI System (controller, service, repository, routes)
+- [x] Step 5: Simulation Engine (controller, service, repository)
+- [x] Step 6: Admin + Agents + Notifications (full CRUD)
+- [x] Step 7: Scheduler (node-cron bi-daily OGWI, monthly sim reset)
+- [x] Step 8: Frontend Foundation (React + Vite + TanStack Router)
+- [x] Step 9: Frontend Layout + Auth (sidebar, login page, auth client)
+- [x] Step 10: Dashboard + OGWI Pages
+- [x] Step 11: Simulation Pages
+- [x] Step 12: Admin Pages (admin, users, agents)
+
+### 2026-03-09 (Session 2)
+- [x] Created Dockerfiles (apps/api/Dockerfile, apps/web/Dockerfile)
+- [x] Created .dockerignore
+- [x] Fixed docker-compose.yml (removed deprecated `version`, switched to postgres:16 from alpine)
+- [x] Fixed turbo.json (`pipeline` → `tasks` for Turbo v2)
+- [x] Added `packageManager` field to root package.json
+- [x] Added `type: "module"` and `exports` to shared package.json
+- [x] Added dotenv loading for monorepo root .env in api/config/env.ts
+- [x] Fixed env validation for optional OpenAI keys (empty strings)
+- [x] Fixed TypeScript errors across codebase:
+  - Prisma JSON types: `Record<string, unknown>` → `Prisma.InputJsonValue`
+  - Express 5 params: `req.params.id as string`
+  - Shared package `can()` type narrowing fix
+  - Exported `RouterContext` from __root.tsx
+  - Removed seed.ts from api tsconfig include
+  - Fixed ogwi.service date type
+- [x] PostgreSQL container running and healthy
+- [x] Prisma migration `init` applied successfully
+- [x] Database seeded (31 OGWI records, 5 early warnings, 3 agents)
+- [x] Full monorepo typecheck passes (4/4 tasks)
+- [x] API starts and responds correctly (tested /api/ogwi/current → 401 auth required)
+
+### 2026-03-09 (Session 3) — Auth Complete
+- [x] Fixed BetterAuth mounting (directly on app, not sub-router — sub-router strips URL prefix)
+- [x] Fixed BetterAuth origin validation (trustedOrigins with dev port variants)
+- [x] Fixed auth-client baseURL (absolute URL using window.location.origin)
+- [x] Modern prisma.config.ts setup (user created, dotenv from monorepo root, seed config)
+- [x] Removed deprecated package.json#prisma field
+- [x] Added basePath: '/api/auth' to BetterAuth config
+- [x] Added minPasswordLength: 8 enforcement
+- [x] Added databaseHooks for auto-promoting ADMIN_EMAIL to ADMIN role on signup
+- [x] Created Zod validators for user endpoints (updateProfile, updateRole, updateModules)
+- [x] Wired validate() middleware on user PATCH routes
+- [x] User repository uses explicit select (excludes sensitive Account data)
+- [x] Root layout: proper auth redirect logic (unauthenticated → /login, authenticated on /login → /)
+- [x] Login page: redirects to dashboard if already authenticated
+- [x] Created AuthGuard component for protected pages with role checking
+- [x] User role shown in sidebar
+- [x] Tested: signup, signin, get-session, sign-out, admin auto-promotion — all working
+- [x] Full dev environment running (API port 3001, Web port 5173, DB Docker)
+
+## Auth Module — Complete
+- **BetterAuth server**: signup, signin, signout, session management
+- **Prisma adapter**: PostgreSQL with session/account/verification tables
+- **Middleware**: requireAuth (session extraction), requireRole (RBAC), requireModule (module access)
+- **Admin**: auto-promotion via ADMIN_EMAIL env var + databaseHooks
+- **Frontend**: login page, auth client, useSession hook, route protection, AuthGuard component
+- **Validation**: Zod schemas on user update endpoints
+- **Security**: explicit field selection (no password leak), session cookies (HttpOnly, SameSite)
+
+## Next Action
+Move to the next module — choose from: OGWI dashboard frontend, Simulations, or Admin pages.
+
+## Remaining Work
+- OGWI dashboard: wire frontend pages to real API data with charts
+- Simulations: OpenAI integration (requires API key)
+- Admin pages: user management UI, agent control panel
+- Early Warning: frontend visualization
+- Production deployment (Docker Compose full stack)
+
+## Architecture Decisions
+- Turborepo monorepo with npm workspaces
+- Controller → Service → Repository → Prisma pattern
+- BetterAuth for authentication (session-based)
+- TanStack Router for type-safe frontend routing
+- Zod for runtime validation on API boundaries
+
+## Blockers
+None currently.
