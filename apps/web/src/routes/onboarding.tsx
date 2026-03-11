@@ -13,6 +13,9 @@ import {
   ArrowRight,
   Lock,
 } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 
 export const Route = createFileRoute('/onboarding')({
   component: OnboardingPage,
@@ -33,8 +36,8 @@ function OnboardingStep({
   const isCompleted = step < currentStep;
 
   return (
-    <div
-      className={`rounded-xl border transition-all duration-500 ${
+    <Card
+      className={`transition-all duration-500 ${
         isActive
           ? 'border-blue-500/40 bg-slate-800/60 shadow-lg shadow-blue-500/5'
           : isCompleted
@@ -58,8 +61,8 @@ function OnboardingStep({
           {title}
         </span>
       </div>
-      {isActive && <div className="px-5 pb-5 pt-1">{children}</div>}
-    </div>
+      {isActive && <CardContent className="pt-0">{children}</CardContent>}
+    </Card>
   );
 }
 
@@ -73,8 +76,8 @@ function OnboardingPage() {
 
   if (isPending) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-400" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -117,7 +120,7 @@ function OnboardingPage() {
           <h1 className="text-3xl font-bold text-white tracking-tight">
             Welcome to Ask Omega Nova
           </h1>
-          <p className="text-slate-400 mt-2">
+          <p className="text-muted-foreground mt-2">
             Initial system configuration and operator onboarding.
           </p>
         </div>
@@ -125,15 +128,10 @@ function OnboardingPage() {
         {/* Progress Bar */}
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-slate-400 text-sm font-medium">Onboarding Progress</span>
-            <span className="text-slate-400 text-sm font-mono">{currentStep} / 4</span>
+            <span className="text-muted-foreground text-sm font-medium">Onboarding Progress</span>
+            <span className="text-muted-foreground text-sm font-mono">{currentStep} / 4</span>
           </div>
-          <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden border border-slate-700/50">
-            <div
-              className="h-full bg-gradient-to-r from-blue-600 to-blue-500 rounded-full transition-all duration-500"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
+          <Progress value={progress} className="h-2 bg-slate-800 border border-slate-700/50" />
         </div>
 
         {/* Onboarding Steps */}
@@ -144,24 +142,27 @@ function OnboardingPage() {
               Omega Nova is a predictive simulation system for geopolitical intelligence analysis.
               Please review the terms of service before proceeding.
             </p>
-            <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg border border-slate-700/50">
-              <div className="flex items-center gap-3">
-                <BookOpen className="w-5 h-5 text-slate-400" />
-                <span className="font-medium text-slate-300 text-sm">
-                  Terms of Service & Operational Protocols
-                </span>
+            <Card className="bg-slate-800/50 border-slate-700/50">
+              <div className="p-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <BookOpen className="w-5 h-5 text-slate-400" />
+                  <span className="font-medium text-slate-300 text-sm">
+                    Terms of Service & Operational Protocols
+                  </span>
+                </div>
+                <Button variant="outline" size="sm" className="border-slate-600/50 text-slate-400 hover:text-white hover:border-slate-500">
+                  View Document
+                </Button>
               </div>
-              <button className="px-3 py-1.5 text-sm rounded-lg border border-slate-600/50 text-slate-400 hover:text-white hover:border-slate-500 transition-colors">
-                View Document
-              </button>
-            </div>
-            <button
+            </Card>
+            <Button
               onClick={nextStep}
-              className="w-full mt-6 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium hover:from-blue-500 hover:to-blue-600 transition-all flex items-center justify-center gap-2 text-sm shadow-lg shadow-blue-500/20"
+              className="w-full mt-6 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 shadow-lg shadow-blue-500/20"
+              size="lg"
             >
               Acknowledge & Continue
               <ArrowRight className="w-4 h-4" />
-            </button>
+            </Button>
           </OnboardingStep>
 
           {/* Step 2: Operator Profile */}
@@ -171,27 +172,29 @@ function OnboardingPage() {
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {['Analyst', 'Operator', 'Commander'].map(level => (
-                <button
+                <Button
                   key={level}
+                  variant={selectedAccessLevel === level ? 'default' : 'outline'}
                   onClick={() => setSelectedAccessLevel(level)}
-                  className={`h-14 flex items-center justify-center gap-2 rounded-lg border text-sm font-medium transition-all ${
+                  className={`h-14 ${
                     selectedAccessLevel === level
-                      ? 'bg-blue-600 border-blue-500/50 text-white shadow-lg shadow-blue-500/20'
+                      ? 'bg-blue-600 hover:bg-blue-500 border-blue-500/50 shadow-lg shadow-blue-500/20'
                       : 'bg-slate-800/50 border-slate-700/50 text-slate-400 hover:text-white hover:border-slate-600'
                   }`}
                 >
                   <UserCheck className="w-4 h-4" />
                   {level}
-                </button>
+                </Button>
               ))}
             </div>
-            <button
+            <Button
               onClick={nextStep}
-              className="w-full mt-6 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium hover:from-blue-500 hover:to-blue-600 transition-all flex items-center justify-center gap-2 text-sm shadow-lg shadow-blue-500/20"
+              className="w-full mt-6 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 shadow-lg shadow-blue-500/20"
+              size="lg"
             >
               Set Profile & Continue
               <ArrowRight className="w-4 h-4" />
-            </button>
+            </Button>
           </OnboardingStep>
 
           {/* Step 3: System Preferences */}
@@ -204,18 +207,19 @@ function OnboardingPage() {
                 </p>
                 <div className="flex gap-3">
                   {['Efficient', 'Real-Time'].map(mode => (
-                    <button
+                    <Button
                       key={mode}
+                      variant={selectedApiMode === mode ? 'default' : 'outline'}
                       onClick={() => setSelectedApiMode(mode)}
-                      className={`flex-1 py-2.5 flex items-center justify-center gap-2 rounded-lg border text-sm font-medium transition-all ${
+                      className={`flex-1 ${
                         selectedApiMode === mode
-                          ? 'bg-blue-600 border-blue-500/50 text-white shadow-lg shadow-blue-500/20'
+                          ? 'bg-blue-600 hover:bg-blue-500 border-blue-500/50 shadow-lg shadow-blue-500/20'
                           : 'bg-slate-800/50 border-slate-700/50 text-slate-400 hover:text-white hover:border-slate-600'
                       }`}
                     >
                       <Server className="w-4 h-4" />
                       {mode}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -225,26 +229,28 @@ function OnboardingPage() {
                 <p className="text-slate-400 text-sm mb-3">
                   Enable or disable real-time notifications for critical threat alerts.
                 </p>
-                <button
+                <Button
+                  variant={alertsEnabled ? 'default' : 'outline'}
                   onClick={() => setAlertsEnabled(!alertsEnabled)}
-                  className={`w-full py-2.5 flex items-center justify-center gap-2 rounded-lg border text-sm font-medium transition-all ${
+                  className={`w-full ${
                     alertsEnabled
-                      ? 'bg-blue-600 border-blue-500/50 text-white shadow-lg shadow-blue-500/20'
+                      ? 'bg-blue-600 hover:bg-blue-500 border-blue-500/50 shadow-lg shadow-blue-500/20'
                       : 'bg-slate-800/50 border-slate-700/50 text-slate-400'
                   }`}
                 >
                   <Bell className="w-4 h-4" />
                   {alertsEnabled ? 'Alerts Enabled' : 'Alerts Disabled'}
-                </button>
+                </Button>
               </div>
             </div>
-            <button
+            <Button
               onClick={nextStep}
-              className="w-full mt-6 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium hover:from-blue-500 hover:to-blue-600 transition-all flex items-center justify-center gap-2 text-sm shadow-lg shadow-blue-500/20"
+              className="w-full mt-6 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 shadow-lg shadow-blue-500/20"
+              size="lg"
             >
               Save Preferences & Continue
               <ArrowRight className="w-4 h-4" />
-            </button>
+            </Button>
           </OnboardingStep>
 
           {/* Step 4: Final Confirmation */}
@@ -257,16 +263,19 @@ function OnboardingPage() {
               </span>
               .
             </p>
-            <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-center">
-              <h3 className="text-emerald-400 font-bold text-lg">Onboarding Complete</h3>
-              <p className="text-emerald-400/70 text-sm mt-1">
-                Click below to enter the platform.
-              </p>
-            </div>
-            <button
+            <Card className="bg-emerald-500/10 border-emerald-500/30">
+              <div className="p-4 text-center">
+                <h3 className="text-emerald-400 font-bold text-lg">Onboarding Complete</h3>
+                <p className="text-emerald-400/70 text-sm mt-1">
+                  Click below to enter the platform.
+                </p>
+              </div>
+            </Card>
+            <Button
               onClick={completeOnboarding}
               disabled={loading}
-              className="w-full mt-6 py-2.5 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-medium hover:from-emerald-500 hover:to-emerald-600 disabled:opacity-50 transition-all flex items-center justify-center gap-2 text-sm shadow-lg shadow-emerald-500/20"
+              className="w-full mt-6 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 shadow-lg shadow-emerald-500/20"
+              size="lg"
             >
               {loading ? (
                 <>
@@ -279,7 +288,7 @@ function OnboardingPage() {
                   Enter Strategic Command
                 </>
               )}
-            </button>
+            </Button>
           </OnboardingStep>
         </div>
 

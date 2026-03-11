@@ -83,10 +83,18 @@ Request → CORS (NestJS) → AuthGuard (BetterAuth session) → RolesGuard → 
 ## Frontend Patterns (`apps/web`)
 - **Routing**: TanStack Router (file-based, type-safe)
 - **State**: TanStack React Query for server state, React context for auth
-- **UI**: shadcn/ui components + Tailwind CSS
+- **UI**: **shadcn/ui components + Tailwind CSS** (ALWAYS use shadcn/ui for all UI — Button, Input, Card, Label, Progress, Badge, etc.)
 - **Charts**: Recharts for OGWI visualizations
 - **API calls**: Centralized API client with auth headers (credentials: include)
 - **Auth client**: BetterAuth React SDK (`useSession`, `signIn`, `signUp`, `signOut`)
+
+### shadcn/ui Usage (REQUIRED)
+- **ALWAYS use shadcn/ui** components instead of raw HTML elements for UI
+- Import from `@/components/ui/<component>` (e.g., `@/components/ui/button`)
+- Available components: `Button`, `Input`, `Card` (Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription), `Label`, `Badge`, `Progress`, `Separator`, `Textarea`, `Tabs`
+- Add new shadcn/ui components as needed via `npx shadcn@latest add <component>` from `apps/web/`
+- Use `className` prop to customize styling while keeping shadcn base styles
+- CSS variables defined in `globals.css` (dark theme: slate-based, blue primary)
 
 ## Database
 - **TypeORM entities** at `apps/api/src/entities/`
