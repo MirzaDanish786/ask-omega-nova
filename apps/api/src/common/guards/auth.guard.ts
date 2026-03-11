@@ -40,13 +40,17 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException('Authentication required');
       }
 
+      const userData = session.user as Record<string, unknown>;
+
       // Attach user to request
       request.user = {
         id: session.user.id,
         email: session.user.email,
         name: session.user.name,
-        role: (session.user as Record<string, unknown>).role as string ?? 'VIEWER',
-        assignedModules: parseModules((session.user as Record<string, unknown>).assignedModules),
+        role: userData.role as string ?? 'VIEWER',
+        assignedModules: parseModules(userData.assignedModules),
+        accountStatus: userData.accountStatus as string ?? 'PENDING',
+        emailVerified: !!session.user.emailVerified,
       };
 
       return true;

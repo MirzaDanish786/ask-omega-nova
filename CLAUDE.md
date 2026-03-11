@@ -75,14 +75,16 @@ Request → CORS (NestJS) → AuthGuard (BetterAuth session) → RolesGuard → 
 - Routes decorated with `@RequireModule('ogwi')` require module access
 - `@CurrentUser()` decorator extracts user from request
 
-### User Creation Flow (Admin-Only — NO Self-Registration)
-- Users CANNOT self-register. There is NO public signup.
-- Only admins can create users via `POST /api/users` (requires ADMIN role).
-- Admin provides: email, password, name, optional role.
-- BetterAuth's `signUpEmail` is called server-side to create the user.
-- The initial admin user is created via `npm run db:seed` (ADMIN_EMAIL env var).
-- After first login, non-admin users complete 4-step onboarding.
-- Login page only has email/password sign-in + forgot password link.
+### User Registration & Approval Flow
+- **Self-registration**: Users sign up at `/signup` (name, email, password)
+- **Email OTP verification**: After signup, a 6-digit OTP is sent to user's email → `/verify-email`
+- **Admin approval**: After email verification, user sees "Pending Approval" screen → `/pending-approval`
+- **Admin approves/rejects**: Admin manages requests at `/admin/approvals`
+- **After approval**: User can log in → 4-step onboarding → dashboard
+- **Admin also creates users**: Admin can still create users via `POST /api/users` (auto-approved, email verified)
+- **Account statuses**: `PENDING` (default), `APPROVED`, `REJECTED`
+- **Email service**: Nodemailer-based, SMTP env vars (falls back to console logging if no SMTP configured)
+- The initial admin user is seeded via `npm run db:seed` (ADMIN_EMAIL env var, auto-approved).
 
 ### Error Handling
 - NestJS built-in exceptions: `NotFoundException`, `ForbiddenException`, `UnauthorizedException`, etc.
@@ -146,8 +148,13 @@ GET    /health                      — Health check (@Public)
 AUTH   /auth/*                      — BetterAuth handles (signin, signout, session, password reset)
 GET    /users/me                    — Current user
 PATCH  /users/me                    — Update profile (incl. onboarding completion)
+POST   /users/send-otp              — Send email verification OTP
+POST   /users/verify-otp            — Verify email OTP code
 GET    /users                       — List all users (ADMIN)
-POST   /users                       — Create new user (ADMIN only — no self-registration)
+GET    /users/pending               — List pending approval users (ADMIN)
+POST   /users                       — Create new user (ADMIN, auto-approved)
+PATCH  /users/:id/approve           — Approve user account (ADMIN)
+PATCH  /users/:id/reject            — Reject user account (ADMIN)
 PATCH  /users/:id/role              — Update user role (ADMIN)
 PATCH  /users/:id/modules           — Update assigned modules (ADMIN)
 GET    /ogwi/current                — Current OGWI score (requires ogwi module)

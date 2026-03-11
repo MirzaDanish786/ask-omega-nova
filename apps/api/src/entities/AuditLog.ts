@@ -7,8 +7,6 @@ import {
   JoinColumn,
   Index,
 } from 'typeorm';
-import { User } from './User.js';
-
 @Entity('audit_log')
 @Index(['userId'])
 @Index(['createdAt'])
@@ -34,7 +32,7 @@ export class AuditLog {
   @CreateDateColumn()
   createdAt!: Date;
 
-  @ManyToOne(() => User, (user) => user.auditLogs)
+  @ManyToOne('User', 'auditLogs')
   @JoinColumn({ name: 'userId' })
-  user!: User;
+  user!: any;
 }

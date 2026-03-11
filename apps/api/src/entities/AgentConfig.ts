@@ -6,8 +6,6 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { AgentAuditLog } from './AgentAuditLog.js';
-
 export enum AgentStatus {
   ACTIVE = 'ACTIVE',
   PAUSED = 'PAUSED',
@@ -47,6 +45,6 @@ export class AgentConfig {
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  @OneToMany(() => AgentAuditLog, (log) => log.agent)
-  auditLogs!: AgentAuditLog[];
+  @OneToMany('AgentAuditLog', 'agent')
+  auditLogs!: any[];
 }

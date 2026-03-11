@@ -6,8 +6,6 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { User } from './User.js';
-
 @Entity('client_company')
 export class ClientCompany {
   @PrimaryColumn({ type: 'varchar' })
@@ -31,6 +29,6 @@ export class ClientCompany {
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  @OneToMany(() => User, (user) => user.company)
-  users!: User[];
+  @OneToMany('User', 'company')
+  users!: any[];
 }

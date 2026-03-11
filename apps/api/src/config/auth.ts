@@ -83,17 +83,32 @@ export const auth = betterAuth({
         defaultValue: true,
         input: false,
       },
+      accountStatus: {
+        type: 'string',
+        defaultValue: 'PENDING',
+        input: false,
+      },
+      otpCode: {
+        type: 'string',
+        defaultValue: null,
+        input: false,
+      },
+      otpExpiresAt: {
+        type: 'string',
+        defaultValue: null,
+        input: false,
+      },
     },
   },
   databaseHooks: {
     user: {
       create: {
-        // Auto-promote ADMIN_EMAIL to ADMIN role on signup
+        // Auto-promote ADMIN_EMAIL to ADMIN role + auto-approve on signup
         after: async (user) => {
           if (user.email === env.ADMIN_EMAIL) {
             const userRepo = AppDataSource.getRepository(User);
-            await userRepo.update(user.id, { role: 'ADMIN' as any });
-            console.log(`[Auth] Auto-promoted ${user.email} to ADMIN role`);
+            await userRepo.update(user.id, { role: 'ADMIN' as any, accountStatus: 'APPROVED' as any, emailVerified: true });
+            console.log(`[Auth] Auto-promoted ${user.email} to ADMIN role (auto-approved)`);
           }
         },
       },

@@ -8,8 +8,6 @@ import {
   JoinColumn,
   Index,
 } from 'typeorm';
-import { User } from './User.js';
-
 export enum SimulationStatus {
   PENDING = 'PENDING',
   RUNNING = 'RUNNING',
@@ -53,7 +51,7 @@ export class Simulation {
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  @ManyToOne(() => User, (user) => user.simulations)
+  @ManyToOne('User', 'simulations')
   @JoinColumn({ name: 'userId' })
-  user!: User;
+  user!: any;
 }

@@ -21,15 +21,39 @@ export class UsersController {
     return this.usersService.updateProfile(user.id, body);
   }
 
+  // ── OTP / Email Verification ──
+
+  @Post('send-otp')
+  sendOtp(@CurrentUser() user: RequestUser) {
+    return this.usersService.sendOtp(user.id);
+  }
+
+  @Post('verify-otp')
+  verifyOtp(
+    @CurrentUser() user: RequestUser,
+    @Body() body: { code: string },
+  ) {
+    return this.usersService.verifyOtp(user.id, body.code);
+  }
+
+  // ── Admin: User Management ──
+
   @Get()
   @Roles('ADMIN')
   getAll() {
     return this.usersService.getAll();
   }
 
+  @Get('pending')
+  @Roles('ADMIN')
+
+  getPending() {
+    return this.usersService.getPending();
+  }
+
   /**
    * Admin-only: create a new user.
-   * Users cannot self-register — only admins can create accounts.
+   * Admin-created users are auto-approved (no email verification needed).
    */
   @Post()
   @Roles('ADMIN')
@@ -37,6 +61,18 @@ export class UsersController {
     @Body() body: { email: string; password: string; name: string; role?: UserRole },
   ) {
     return this.usersService.createUser(body);
+  }
+
+  @Patch(':id/approve')
+  @Roles('ADMIN')
+  approveUser(@Param('id') id: string) {
+    return this.usersService.approveUser(id);
+  }
+
+  @Patch(':id/reject')
+  @Roles('ADMIN')
+  rejectUser(@Param('id') id: string) {
+    return this.usersService.rejectUser(id);
   }
 
   @Patch(':id/role')

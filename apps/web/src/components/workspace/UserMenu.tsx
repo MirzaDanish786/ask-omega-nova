@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { User, LogOut, ChevronRight, Settings, Users, BarChart3, Crown } from 'lucide-react';
+import { User, LogOut, ChevronRight, Settings, Users, BarChart3, Crown, UserCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -39,6 +39,7 @@ export function UserMenu({ user, role }: UserMenuProps) {
 
   const adminItems = [
     { label: 'Admin Center', icon: Settings, to: '/admin' },
+    { label: 'Account Approvals', icon: UserCheck, to: '/admin/approvals' },
     { label: 'User Management', icon: Users, to: '/admin/users' },
     { label: 'Agent Control', icon: BarChart3, to: '/admin/agents' },
   ];

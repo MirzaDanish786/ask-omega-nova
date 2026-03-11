@@ -18,7 +18,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootLayout,
 });
 
-const PUBLIC_PAGES = ['/login', '/forgot-password', '/reset-password'];
+const PUBLIC_PAGES = ['/login', '/forgot-password', '/reset-password', '/signup', '/verify-email', '/pending-approval'];
 
 const NAV_ITEMS = [
   { to: '/', label: 'OmegaNova', icon: Shield },
@@ -66,10 +66,11 @@ function RootLayout() {
     return null;
   }
 
-  if (isPublicPage) {
-    navigate({ to: '/' });
-    return null;
-  }
+  // User is logged in — handle status-based routing
+  const isVerifyPage = location.pathname === '/verify-email';
+  const isPendingPage = location.pathname === '/pending-approval';
+
+  if (isVerifyPage || isPendingPage) return <Outlet />;
 
   if (isOnboardingPage) return <Outlet />;
 
@@ -82,9 +83,28 @@ function RootLayout() {
   }
 
   const userRole = (userData?.role ?? (session.user as Record<string, unknown>).role) as string;
+  const emailVerified = userData?.emailVerified as boolean | undefined;
+  const accountStatus = (userData?.accountStatus ?? 'PENDING') as string;
   const onboardingCompleted = userData?.onboardingCompleted as boolean | undefined;
-  if (userRole !== 'ADMIN' && onboardingCompleted === false) {
-    navigate({ to: '/onboarding' });
+
+  // Non-admin users: check email verification first, then approval status
+  if (userRole !== 'ADMIN') {
+    if (emailVerified === false) {
+      navigate({ to: '/verify-email' });
+      return null;
+    }
+    if (accountStatus !== 'APPROVED') {
+      navigate({ to: '/pending-approval' });
+      return null;
+    }
+    if (onboardingCompleted === false) {
+      navigate({ to: '/onboarding' });
+      return null;
+    }
+  }
+
+  if (isPublicPage) {
+    navigate({ to: '/' });
     return null;
   }
 

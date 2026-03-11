@@ -25,7 +25,7 @@ export class OgwiService {
   ) {}
 
   async getCurrent(): Promise<IOgwiCurrentResponse> {
-    const latest = await this.ogwiRepo.findOne({ order: { date: 'DESC' } });
+    const [latest] = await this.ogwiRepo.find({ order: { date: 'DESC' }, take: 1 });
     const ogwiScore = latest?.ogwiScore ?? FALLBACK_OGWI;
     const crisisLevel = getCrisisLevel(ogwiScore);
 
@@ -62,13 +62,13 @@ export class OgwiService {
   }
 
   async getForecast(): Promise<IOgwiForecastPoint[]> {
-    const latest = await this.ogwiRepo.findOne({ order: { date: 'DESC' } });
+    const [latest] = await this.ogwiRepo.find({ order: { date: 'DESC' }, take: 1 });
     const ogwiNow = latest?.ogwiScore ?? FALLBACK_OGWI;
     return this.generate10YearForecast(ogwiNow);
   }
 
   async triggerUpdate(): Promise<{ ogwiScore: number; crisisLevel: string }> {
-    const latest = await this.ogwiRepo.findOne({ order: { date: 'DESC' } });
+    const [latest] = await this.ogwiRepo.find({ order: { date: 'DESC' }, take: 1 });
     const previousScore = latest?.ogwiScore ?? FALLBACK_OGWI;
 
     const microDelta = (Math.random() - 0.48) * 0.04;
@@ -116,7 +116,7 @@ export class OgwiService {
   }
 
   async getLatestScore(): Promise<number> {
-    const latest = await this.ogwiRepo.findOne({ order: { date: 'DESC' } });
+    const [latest] = await this.ogwiRepo.find({ order: { date: 'DESC' }, take: 1 });
     return latest?.ogwiScore ?? FALLBACK_OGWI;
   }
 

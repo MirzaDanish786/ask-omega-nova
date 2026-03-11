@@ -15,6 +15,12 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   FRONTEND_URL: z.string().url().default('http://localhost:5173'),
   ADMIN_EMAIL: z.string().email().default('admin@omega-nova.com'),
+  // SMTP (optional — if not set, emails are logged to console)
+  SMTP_HOST: z.string().optional().default(''),
+  SMTP_PORT: z.coerce.number().optional().default(587),
+  SMTP_USER: z.string().optional().default(''),
+  SMTP_PASS: z.string().optional().default(''),
+  SMTP_FROM: z.string().optional().default('noreply@omega-nova.com'),
 });
 
 export type Env = z.infer<typeof envSchema>;

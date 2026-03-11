@@ -8,18 +8,18 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Session } from './Session.js';
-import { Account } from './Account.js';
-import { Simulation } from './Simulation.js';
-import { Notification } from './Notification.js';
-import { AuditLog } from './AuditLog.js';
-import { ClientCompany } from './ClientCompany.js';
 
 export enum UserRole {
   ADMIN = 'ADMIN',
   ALL_ACCESS = 'ALL_ACCESS',
   ANALYST = 'ANALYST',
   VIEWER = 'VIEWER',
+}
+
+export enum AccountStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
 }
 
 @Entity('user')
@@ -66,28 +66,37 @@ export class User {
   @Column({ type: 'boolean', default: true })
   alertsEnabled!: boolean;
 
+  @Column({ type: 'enum', enum: AccountStatus, default: AccountStatus.PENDING })
+  accountStatus!: AccountStatus;
+
+  @Column({ type: 'varchar', nullable: true })
+  otpCode!: string | null;
+
+  @Column({ type: 'timestamp', nullable: true })
+  otpExpiresAt!: Date | null;
+
   @CreateDateColumn()
   createdAt!: Date;
 
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  @ManyToOne(() => ClientCompany, (company) => company.users, { nullable: true })
+  @ManyToOne('ClientCompany', 'users', { nullable: true })
   @JoinColumn({ name: 'companyId' })
-  company!: ClientCompany | null;
+  company!: any;
 
-  @OneToMany(() => Session, (session) => session.user)
-  sessions!: Session[];
+  @OneToMany('Session', 'user')
+  sessions!: any[];
 
-  @OneToMany(() => Account, (account) => account.user)
-  accounts!: Account[];
+  @OneToMany('Account', 'user')
+  accounts!: any[];
 
-  @OneToMany(() => Simulation, (simulation) => simulation.user)
-  simulations!: Simulation[];
+  @OneToMany('Simulation', 'user')
+  simulations!: any[];
 
-  @OneToMany(() => Notification, (notification) => notification.user)
-  notifications!: Notification[];
+  @OneToMany('Notification', 'user')
+  notifications!: any[];
 
-  @OneToMany(() => AuditLog, (log) => log.user)
-  auditLogs!: AuditLog[];
+  @OneToMany('AuditLog', 'user')
+  auditLogs!: any[];
 }

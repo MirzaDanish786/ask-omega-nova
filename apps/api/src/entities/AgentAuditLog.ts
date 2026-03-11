@@ -7,8 +7,6 @@ import {
   JoinColumn,
   Index,
 } from 'typeorm';
-import { AgentConfig } from './AgentConfig.js';
-
 @Entity('agent_audit_log')
 export class AgentAuditLog {
   @PrimaryColumn({ type: 'varchar' })
@@ -33,7 +31,7 @@ export class AgentAuditLog {
   @CreateDateColumn()
   createdAt!: Date;
 
-  @ManyToOne(() => AgentConfig, (agent) => agent.auditLogs)
+  @ManyToOne('AgentConfig', 'auditLogs')
   @JoinColumn({ name: 'agentId', referencedColumnName: 'agentId' })
-  agent!: AgentConfig;
+  agent!: any;
 }

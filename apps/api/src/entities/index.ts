@@ -1,4 +1,4 @@
-export { User, UserRole } from './User.js';
+export { User, UserRole, AccountStatus } from './User.js';
 export { Session } from './Session.js';
 export { Account } from './Account.js';
 export { Verification } from './Verification.js';

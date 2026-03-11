@@ -124,7 +124,17 @@ async function main() {
       console.log(`  Admin user already exists or creation failed:`, (err as Error).message);
     }
   } else {
-    console.log(`  Admin user already exists: ${adminEmail}`);
+    // Ensure existing admin has correct role, status, and emailVerified
+    if (existingAdmin.role !== 'ADMIN' || existingAdmin.accountStatus !== 'APPROVED' || !existingAdmin.emailVerified) {
+      await userRepo.update(existingAdmin.id, {
+        role: 'ADMIN' as any,
+        accountStatus: 'APPROVED' as any,
+        emailVerified: true,
+      });
+      console.log(`  Updated existing admin: ${adminEmail} → ADMIN, APPROVED, emailVerified`);
+    } else {
+      console.log(`  Admin user already exists: ${adminEmail}`);
+    }
   }
 
   console.log('Seeding complete!');

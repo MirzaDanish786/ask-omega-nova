@@ -12,6 +12,7 @@ import { AgentsModule } from './modules/agents/agents.module.js';
 import { NotificationsModule } from './modules/notifications/notifications.module.js';
 import { AdminModule } from './modules/admin/admin.module.js';
 import { SchedulerModule } from './modules/scheduler/scheduler.module.js';
+import { EmailModule } from './modules/email/email.module.js';
 import { HealthController } from './health.controller.js';
 import { envValidation } from './config/env.validation.js';
 import {
@@ -63,6 +64,9 @@ import {
       ttl: 15 * 60 * 1000,
       limit: 200,
     }]),
+
+    // Global modules
+    EmailModule,
 
     // Feature modules
     AuthModule,

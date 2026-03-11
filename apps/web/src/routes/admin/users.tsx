@@ -15,6 +15,7 @@ interface User {
   assignedModules: string[];
   monthlySimCount: number;
   simRateLimit: number;
+  accountStatus: string;
   createdAt: string;
 }
 
@@ -54,6 +55,7 @@ function AdminUsersPage() {
               <th className="text-left px-4 py-3 font-medium">Name</th>
               <th className="text-left px-4 py-3 font-medium">Email</th>
               <th className="text-left px-4 py-3 font-medium">Role</th>
+              <th className="text-left px-4 py-3 font-medium">Status</th>
               <th className="text-left px-4 py-3 font-medium">Sims (Monthly)</th>
               <th className="text-left px-4 py-3 font-medium">Joined</th>
             </tr>
@@ -71,6 +73,15 @@ function AdminUsersPage() {
                   >
                     {ROLES.map(r => <option key={r} value={r}>{r}</option>)}
                   </select>
+                </td>
+                <td className="px-4 py-3">
+                  <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                    user.accountStatus === 'APPROVED' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' :
+                    user.accountStatus === 'REJECTED' ? 'bg-red-500/10 text-red-400 border border-red-500/30' :
+                    'bg-amber-500/10 text-amber-400 border border-amber-500/30'
+                  }`}>
+                    {user.accountStatus}
+                  </span>
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">
                   {user.monthlySimCount} / {user.simRateLimit}

@@ -9,9 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as TravelRouteImport } from './routes/travel'
 import { Route as SrmRouteImport } from './routes/srm'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as PendingApprovalRouteImport } from './routes/pending-approval'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as OgwiRouteImport } from './routes/ogwi'
 import { Route as MyActivitiesRouteImport } from './routes/my-activities'
@@ -25,8 +28,14 @@ import { Route as SimulationsIndexRouteImport } from './routes/simulations/index
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as SimulationsIdRouteImport } from './routes/simulations/$id'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
+import { Route as AdminApprovalsRouteImport } from './routes/admin/approvals'
 import { Route as AdminAgentsRouteImport } from './routes/admin/agents'
 
+const VerifyEmailRoute = VerifyEmailRouteImport.update({
+  id: '/verify-email',
+  path: '/verify-email',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TravelRoute = TravelRouteImport.update({
   id: '/travel',
   path: '/travel',
@@ -37,9 +46,19 @@ const SrmRoute = SrmRouteImport.update({
   path: '/srm',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PendingApprovalRoute = PendingApprovalRouteImport.update({
+  id: '/pending-approval',
+  path: '/pending-approval',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -107,6 +126,11 @@ const AdminUsersRoute = AdminUsersRouteImport.update({
   path: '/admin/users',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminApprovalsRoute = AdminApprovalsRouteImport.update({
+  id: '/admin/approvals',
+  path: '/admin/approvals',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminAgentsRoute = AdminAgentsRouteImport.update({
   id: '/admin/agents',
   path: '/admin/agents',
@@ -123,10 +147,14 @@ export interface FileRoutesByFullPath {
   '/my-activities': typeof MyActivitiesRoute
   '/ogwi': typeof OgwiRoute
   '/onboarding': typeof OnboardingRoute
+  '/pending-approval': typeof PendingApprovalRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/signup': typeof SignupRoute
   '/srm': typeof SrmRoute
   '/travel': typeof TravelRoute
+  '/verify-email': typeof VerifyEmailRoute
   '/admin/agents': typeof AdminAgentsRoute
+  '/admin/approvals': typeof AdminApprovalsRoute
   '/admin/users': typeof AdminUsersRoute
   '/simulations/$id': typeof SimulationsIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -142,10 +170,14 @@ export interface FileRoutesByTo {
   '/my-activities': typeof MyActivitiesRoute
   '/ogwi': typeof OgwiRoute
   '/onboarding': typeof OnboardingRoute
+  '/pending-approval': typeof PendingApprovalRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/signup': typeof SignupRoute
   '/srm': typeof SrmRoute
   '/travel': typeof TravelRoute
+  '/verify-email': typeof VerifyEmailRoute
   '/admin/agents': typeof AdminAgentsRoute
+  '/admin/approvals': typeof AdminApprovalsRoute
   '/admin/users': typeof AdminUsersRoute
   '/simulations/$id': typeof SimulationsIdRoute
   '/admin': typeof AdminIndexRoute
@@ -162,10 +194,14 @@ export interface FileRoutesById {
   '/my-activities': typeof MyActivitiesRoute
   '/ogwi': typeof OgwiRoute
   '/onboarding': typeof OnboardingRoute
+  '/pending-approval': typeof PendingApprovalRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/signup': typeof SignupRoute
   '/srm': typeof SrmRoute
   '/travel': typeof TravelRoute
+  '/verify-email': typeof VerifyEmailRoute
   '/admin/agents': typeof AdminAgentsRoute
+  '/admin/approvals': typeof AdminApprovalsRoute
   '/admin/users': typeof AdminUsersRoute
   '/simulations/$id': typeof SimulationsIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -183,10 +219,14 @@ export interface FileRouteTypes {
     | '/my-activities'
     | '/ogwi'
     | '/onboarding'
+    | '/pending-approval'
     | '/reset-password'
+    | '/signup'
     | '/srm'
     | '/travel'
+    | '/verify-email'
     | '/admin/agents'
+    | '/admin/approvals'
     | '/admin/users'
     | '/simulations/$id'
     | '/admin/'
@@ -202,10 +242,14 @@ export interface FileRouteTypes {
     | '/my-activities'
     | '/ogwi'
     | '/onboarding'
+    | '/pending-approval'
     | '/reset-password'
+    | '/signup'
     | '/srm'
     | '/travel'
+    | '/verify-email'
     | '/admin/agents'
+    | '/admin/approvals'
     | '/admin/users'
     | '/simulations/$id'
     | '/admin'
@@ -221,10 +265,14 @@ export interface FileRouteTypes {
     | '/my-activities'
     | '/ogwi'
     | '/onboarding'
+    | '/pending-approval'
     | '/reset-password'
+    | '/signup'
     | '/srm'
     | '/travel'
+    | '/verify-email'
     | '/admin/agents'
+    | '/admin/approvals'
     | '/admin/users'
     | '/simulations/$id'
     | '/admin/'
@@ -241,10 +289,14 @@ export interface RootRouteChildren {
   MyActivitiesRoute: typeof MyActivitiesRoute
   OgwiRoute: typeof OgwiRoute
   OnboardingRoute: typeof OnboardingRoute
+  PendingApprovalRoute: typeof PendingApprovalRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  SignupRoute: typeof SignupRoute
   SrmRoute: typeof SrmRoute
   TravelRoute: typeof TravelRoute
+  VerifyEmailRoute: typeof VerifyEmailRoute
   AdminAgentsRoute: typeof AdminAgentsRoute
+  AdminApprovalsRoute: typeof AdminApprovalsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   SimulationsIdRoute: typeof SimulationsIdRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -253,6 +305,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verify-email': {
+      id: '/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof VerifyEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/travel': {
       id: '/travel'
       path: '/travel'
@@ -267,11 +326,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SrmRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pending-approval': {
+      id: '/pending-approval'
+      path: '/pending-approval'
+      fullPath: '/pending-approval'
+      preLoaderRoute: typeof PendingApprovalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -365,6 +438,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/approvals': {
+      id: '/admin/approvals'
+      path: '/admin/approvals'
+      fullPath: '/admin/approvals'
+      preLoaderRoute: typeof AdminApprovalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/agents': {
       id: '/admin/agents'
       path: '/admin/agents'
@@ -385,10 +465,14 @@ const rootRouteChildren: RootRouteChildren = {
   MyActivitiesRoute: MyActivitiesRoute,
   OgwiRoute: OgwiRoute,
   OnboardingRoute: OnboardingRoute,
+  PendingApprovalRoute: PendingApprovalRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  SignupRoute: SignupRoute,
   SrmRoute: SrmRoute,
   TravelRoute: TravelRoute,
+  VerifyEmailRoute: VerifyEmailRoute,
   AdminAgentsRoute: AdminAgentsRoute,
+  AdminApprovalsRoute: AdminApprovalsRoute,
   AdminUsersRoute: AdminUsersRoute,
   SimulationsIdRoute: SimulationsIdRoute,
   AdminIndexRoute: AdminIndexRoute,

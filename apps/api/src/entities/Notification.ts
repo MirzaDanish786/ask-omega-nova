@@ -7,8 +7,6 @@ import {
   JoinColumn,
   Index,
 } from 'typeorm';
-import { User } from './User.js';
-
 @Entity('notification')
 export class Notification {
   @PrimaryColumn({ type: 'varchar' })
@@ -36,7 +34,7 @@ export class Notification {
   @CreateDateColumn()
   createdAt!: Date;
 
-  @ManyToOne(() => User, (user) => user.notifications)
+  @ManyToOne('User', 'notifications')
   @JoinColumn({ name: 'userId' })
-  user!: User;
+  user!: any;
 }

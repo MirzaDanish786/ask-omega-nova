@@ -38,7 +38,8 @@ function AdminCenterPage() {
         <StatCard title="OGWI Updates (30d)" value={stats?.ogwiUpdates30d ?? 0} />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <QuickAction title="Account Approvals" description="Review and approve pending user registrations" href="/admin/approvals" />
         <QuickAction title="User Management" description="Manage user roles and module access" href="/admin/users" />
         <QuickAction title="Agent Control" description="Monitor and control background agents" href="/admin/agents" />
       </div>
