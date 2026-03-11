@@ -46,7 +46,6 @@ function VerifyEmailPage() {
     setCode(newCode);
     setError('');
 
-    // Auto-focus next input
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
@@ -103,29 +102,27 @@ function VerifyEmailPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 px-4">
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSA2MCAwIEwgMCAwIDAgNjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-40" />
-
-      <div className="w-full max-w-md relative z-10">
-        <Card className="bg-slate-900/80 backdrop-blur-sm border-slate-700/50 shadow-2xl shadow-black/40">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
+      <div className="w-full max-w-md">
+        <Card className="shadow-lg border-slate-200">
           <CardHeader className="text-center pb-2">
-            <div className="mx-auto w-16 h-16 rounded-xl flex items-center justify-center mb-4 bg-gradient-to-br from-blue-600 to-blue-800 border border-blue-500/30 shadow-lg shadow-blue-500/20">
+            <div className="mx-auto w-16 h-16 rounded-xl flex items-center justify-center mb-4 bg-gradient-to-br from-slate-800 to-slate-900 shadow-lg">
               <Mail className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
               Verify Your Email
             </h1>
             <p className="text-muted-foreground text-sm mt-1.5">
               We sent a 6-digit verification code to
             </p>
-            <p className="text-blue-400 font-medium text-sm mt-1">
+            <p className="text-primary font-medium text-sm mt-1">
               {session.user.email}
             </p>
           </CardHeader>
 
           <CardContent className="pt-4">
             {error && (
-              <div className="mb-5 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+              <div className="mb-5 p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm">
                 {error}
               </div>
             )}
@@ -142,7 +139,7 @@ function VerifyEmailPage() {
                   value={digit}
                   onChange={e => handleInput(i, e.target.value)}
                   onKeyDown={e => handleKeyDown(i, e)}
-                  className="w-12 h-14 text-center text-xl font-bold bg-slate-800/50 border-slate-600/50 text-white focus-visible:ring-blue-500/50 focus-visible:border-blue-500"
+                  className="w-12 h-14 text-center text-xl font-bold"
                 />
               ))}
             </div>
@@ -150,7 +147,7 @@ function VerifyEmailPage() {
             <Button
               onClick={handleVerify}
               disabled={loading || code.some(d => !d)}
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 shadow-lg shadow-blue-500/20"
+              className="w-full"
               size="lg"
             >
               {loading ? (
@@ -167,13 +164,12 @@ function VerifyEmailPage() {
             </Button>
 
             <div className="text-center mt-6">
-              <p className="text-slate-400 text-sm mb-2">Didn't receive the code?</p>
+              <p className="text-muted-foreground text-sm mb-2">Didn't receive the code?</p>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleResend}
                 disabled={resending || resendCooldown > 0}
-                className="text-blue-400 hover:text-blue-300"
               >
                 {resending ? (
                   <Loader2 className="w-4 h-4 animate-spin mr-1" />
@@ -187,7 +183,7 @@ function VerifyEmailPage() {
         </Card>
 
         <div className="text-center mt-6">
-          <p className="text-xs text-slate-600 flex items-center justify-center gap-1.5">
+          <p className="text-xs text-slate-400 flex items-center justify-center gap-1.5">
             <Lock className="w-3 h-3" />
             Secured with end-to-end encryption
           </p>

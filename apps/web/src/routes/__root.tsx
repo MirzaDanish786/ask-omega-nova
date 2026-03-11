@@ -54,8 +54,8 @@ function RootLayout() {
   // --- Auth guards ---
   if (isPending) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-950">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+      <div className="flex h-screen items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -76,8 +76,8 @@ function RootLayout() {
 
   if (userLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-950">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+      <div className="flex h-screen items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -112,7 +112,7 @@ function RootLayout() {
   const ogwiDelta = 0.01;
 
   return (
-    <div className="flex flex-col h-screen bg-slate-950">
+    <div className="flex flex-col h-screen bg-background">
       {/* ===== TOP HEADER BAR ===== */}
       <header
         className="sticky top-0 z-50 h-16 flex items-center justify-between px-4 lg:px-6"
@@ -239,7 +239,7 @@ function RootLayout() {
       <OgwiLiveTicker />
 
       {/* ===== MAIN CONTENT ===== */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto bg-white">
         <Outlet />
       </main>
     </div>
