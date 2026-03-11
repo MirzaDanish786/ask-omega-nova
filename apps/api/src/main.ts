@@ -31,7 +31,7 @@ async function bootstrap(): Promise<void> {
   // This bypasses NestJS routing entirely for auth — BetterAuth handles its own routing.
   const betterAuthHandler = toNodeHandler(auth);
   const expressApp = app.getHttpAdapter().getInstance();
-  expressApp.all('/api/auth/*', (req: any, res: any) => {
+  expressApp.all('/api/auth/{*splat}', (req: any, res: any) => {
     betterAuthHandler(req, res);
   });
 
