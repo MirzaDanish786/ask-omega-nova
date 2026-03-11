@@ -43,8 +43,8 @@ export function LiveNewsTicker() {
 
   if (news.length === 0) {
     return (
-      <div className="h-8 flex items-center px-4 border-b border-slate-800/30 bg-slate-900/85 backdrop-blur-xl">
-        <AlertCircle className="w-3.5 h-3.5 text-slate-500 mr-2" />
+      <div className="h-8 flex items-center px-4 border-b border-slate-200 bg-white">
+        <AlertCircle className="w-3.5 h-3.5 text-slate-400 mr-2" />
         <span className="text-xs text-slate-500">No geopolitically material developments</span>
       </div>
     );
@@ -53,11 +53,11 @@ export function LiveNewsTicker() {
   const currentNews = news[currentIndex];
 
   return (
-    <div className="h-8 flex items-center overflow-hidden border-b border-slate-800/30 bg-slate-900/85 backdrop-blur-xl relative">
+    <div className="h-8 flex items-center overflow-hidden border-b border-slate-200 bg-white relative">
       {/* Live indicator */}
-      <div className="flex items-center gap-2 px-4 flex-shrink-0 z-10 bg-slate-900/95">
-        <Rss className="w-3.5 h-3.5 text-cyan-400" />
-        <span className="text-[10px] font-semibold tracking-wider text-slate-400 uppercase">Live</span>
+      <div className="flex items-center gap-2 px-4 flex-shrink-0 z-10 bg-white">
+        <Rss className="w-3.5 h-3.5 text-cyan-600" />
+        <span className="text-[10px] font-semibold tracking-wider text-slate-500 uppercase">Live</span>
         <div
           className="w-1.5 h-1.5 rounded-full bg-red-500"
           style={{ animation: 'live-pulse 1.5s ease-in-out infinite', boxShadow: '0 0 6px rgba(239, 68, 68, 0.6)' }}
@@ -75,8 +75,8 @@ export function LiveNewsTicker() {
               Breaking
             </Badge>
           )}
-          <span className="text-xs text-slate-200 truncate">{currentNews.title}</span>
-          <span className="text-[10px] text-slate-500 flex-shrink-0 hidden md:inline">
+          <span className="text-xs text-slate-700 truncate">{currentNews.title}</span>
+          <span className="text-[10px] text-slate-400 flex-shrink-0 hidden md:inline">
             {currentNews.source}
           </span>
         </div>

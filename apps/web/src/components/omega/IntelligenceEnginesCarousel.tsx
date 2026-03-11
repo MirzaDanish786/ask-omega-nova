@@ -40,7 +40,7 @@ export function IntelligenceEnginesCarousel() {
         {items.map((engine, idx) => (
           <Card
             key={idx}
-            className="w-64 flex-none rounded-2xl p-6 relative group cursor-pointer overflow-hidden transition-transform hover:-translate-y-1.5 hover:scale-[1.03] bg-slate-950/85 backdrop-blur-xl border-white/[0.08] shadow-lg"
+            className="w-64 flex-none rounded-2xl p-6 relative group cursor-pointer overflow-hidden transition-transform hover:-translate-y-1.5 hover:scale-[1.03] bg-white border-slate-200 shadow-sm hover:shadow-lg"
           >
             {/* Concentric circles */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -51,8 +51,8 @@ export function IntelligenceEnginesCarousel() {
                   style={{
                     width: `${18 * i}%`,
                     height: `${18 * i}%`,
-                    border: '1px solid rgba(201, 168, 113, 0.12)',
-                    boxShadow: i === 3 ? '0 0 20px rgba(201, 168, 113, 0.08)' : 'none',
+                    border: '1px solid rgba(146, 112, 42, 0.08)',
+                    boxShadow: i === 3 ? '0 0 20px rgba(146, 112, 42, 0.04)' : 'none',
                   }}
                 />
               ))}
@@ -61,21 +61,21 @@ export function IntelligenceEnginesCarousel() {
             {/* Icon */}
             <div className="relative z-10 mb-6 flex justify-center transition-transform group-hover:scale-110">
               <engine.icon
-                className="w-16 h-16 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
-                style={{ color: '#C9A871' }}
+                className="w-16 h-16 drop-shadow-sm"
+                style={{ color: '#92702a' }}
               />
             </div>
 
             {/* Title */}
             <h3
               className="text-center text-base font-semibold mb-2 relative z-10"
-              style={{ color: '#C9A871', textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}
+              style={{ color: '#92702a' }}
             >
               {engine.title}
             </h3>
 
             {/* Description */}
-            <p className="text-center text-xs text-gray-400 opacity-70 relative z-10 leading-relaxed">
+            <p className="text-center text-xs text-slate-500 relative z-10 leading-relaxed">
               {engine.description}
             </p>
 
@@ -83,7 +83,7 @@ export function IntelligenceEnginesCarousel() {
             <div
               className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none"
               style={{
-                background: 'linear-gradient(45deg, transparent 30%, rgba(201,168,113,0.08) 50%, transparent 70%)',
+                background: 'linear-gradient(45deg, transparent 30%, rgba(146,112,42,0.05) 50%, transparent 70%)',
                 animation: 'shimmer 2s infinite',
               }}
             />

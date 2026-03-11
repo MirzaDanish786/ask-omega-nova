@@ -3,10 +3,11 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSession } from '../../lib/auth-client';
 import { api } from '../../lib/api';
-import { Users, Search, Loader2 } from 'lucide-react';
+import { Users, Search, Loader2, UserCheck, UserX } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -43,6 +44,7 @@ function AdminUsersPage() {
 
   const [search, setSearch] = useState('');
   const [roleChange, setRoleChange] = useState<{ user: User; newRole: string } | null>(null);
+  const [confirmAction, setConfirmAction] = useState<{ type: 'approve' | 'reject'; user: User } | null>(null);
 
   const { data: users, isLoading } = useQuery<User[]>({
     queryKey: ['admin', 'users'],
@@ -56,6 +58,24 @@ function AdminUsersPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
       setRoleChange(null);
+    },
+  });
+
+  const approveMutation = useMutation({
+    mutationFn: (id: string) => api.patch(`/users/${id}/approve`, {}),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'pending-users'] });
+      setConfirmAction(null);
+    },
+  });
+
+  const rejectMutation = useMutation({
+    mutationFn: (id: string) => api.patch(`/users/${id}/reject`, {}),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'pending-users'] });
+      setConfirmAction(null);
     },
   });
 
@@ -73,6 +93,8 @@ function AdminUsersPage() {
     u.name.toLowerCase().includes(search.toLowerCase()) ||
     u.email.toLowerCase().includes(search.toLowerCase())
   );
+
+  const isMutating = approveMutation.isPending || rejectMutation.isPending;
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-8 space-y-6">
@@ -123,6 +145,7 @@ function AdminUsersPage() {
                   <th className="text-left px-4 py-3 font-medium text-slate-600">Status</th>
                   <th className="text-left px-4 py-3 font-medium text-slate-600">Sims (Monthly)</th>
                   <th className="text-left px-4 py-3 font-medium text-slate-600">Joined</th>
+                  <th className="text-left px-4 py-3 font-medium text-slate-600">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -172,6 +195,29 @@ function AdminUsersPage() {
                     <td className="px-4 py-3 text-muted-foreground">
                       {new Date(user.createdAt).toLocaleDateString()}
                     </td>
+                    <td className="px-4 py-3">
+                      {user.accountStatus === 'PENDING' && (
+                        <div className="flex items-center gap-1.5">
+                          <Button
+                            size="sm"
+                            onClick={() => setConfirmAction({ type: 'approve', user })}
+                            className="h-7 px-2.5 text-xs bg-emerald-600 hover:bg-emerald-700 text-white"
+                          >
+                            <UserCheck className="w-3.5 h-3.5" />
+                            Approve
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setConfirmAction({ type: 'reject', user })}
+                            className="h-7 px-2.5 text-xs border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                          >
+                            <UserX className="w-3.5 h-3.5" />
+                            Reject
+                          </Button>
+                        </div>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -218,6 +264,51 @@ function AdminUsersPage() {
             >
               {roleMutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
               Yes, Change Role
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Approve/Reject Confirmation Dialog */}
+      <AlertDialog open={!!confirmAction} onOpenChange={(open) => { if (!open) setConfirmAction(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {confirmAction?.type === 'approve' ? 'Approve User Account' : 'Reject User Account'}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {confirmAction?.type === 'approve' ? (
+                <>
+                  Are you sure you want to approve <strong>{confirmAction.user.name}</strong> ({confirmAction.user.email})?
+                  They will receive an email notification and be able to log in to the platform.
+                </>
+              ) : (
+                <>
+                  Are you sure you want to reject <strong>{confirmAction?.user.name}</strong> ({confirmAction?.user.email})?
+                  They will be notified that their account request was not approved.
+                </>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isMutating}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (!confirmAction) return;
+                if (confirmAction.type === 'approve') {
+                  approveMutation.mutate(confirmAction.user.id);
+                } else {
+                  rejectMutation.mutate(confirmAction.user.id);
+                }
+              }}
+              disabled={isMutating}
+              className={confirmAction?.type === 'approve'
+                ? 'bg-emerald-600 hover:bg-emerald-700'
+                : 'bg-red-600 hover:bg-red-700'
+              }
+            >
+              {isMutating && <Loader2 className="w-4 h-4 animate-spin" />}
+              {confirmAction?.type === 'approve' ? 'Yes, Approve' : 'Yes, Reject'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

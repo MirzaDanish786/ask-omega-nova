@@ -33,12 +33,12 @@ function getScoreColor(score: number) {
 
 function GlobalSituationPage() {
   return (
-    <div className="min-h-full" style={{ background: '#0a0e1a' }}>
+    <div className="min-h-full bg-white">
       <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6 space-y-6">
         {/* Page header */}
         <div>
-          <h1 className="text-2xl font-bold text-white">Global Situation View</h1>
-          <p className="text-sm text-slate-400 mt-1">Real-time geopolitical risk assessment across all regions</p>
+          <h1 className="text-2xl font-bold text-slate-900">Global Situation View</h1>
+          <p className="text-sm text-slate-500 mt-1">Real-time geopolitical risk assessment across all regions</p>
         </div>
 
         {/* Domain navigation strip */}
@@ -48,8 +48,8 @@ function GlobalSituationPage() {
               key={domain}
               className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
                 idx === 0
-                  ? 'bg-white/10 text-white border border-white/20'
-                  : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
+                  ? 'bg-slate-900 text-white'
+                  : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 border border-transparent'
               }`}
             >
               {domain}
@@ -62,12 +62,7 @@ function GlobalSituationPage() {
           {REGIONS.map(region => (
             <div
               key={region.name}
-              className="rounded-xl p-5 border transition-all hover:-translate-y-1 cursor-pointer"
-              style={{
-                background: '#ffffff',
-                borderColor: 'rgba(226, 232, 240, 0.8)',
-                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
-              }}
+              className="rounded-xl p-5 border border-slate-200 bg-white transition-all hover:-translate-y-1 cursor-pointer shadow-sm hover:shadow-md"
             >
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-semibold text-slate-800 uppercase tracking-wide">{region.name}</h3>
@@ -103,34 +98,28 @@ function GlobalSituationPage() {
           ))}
         </div>
 
-        {/* GSI Panel Placeholder */}
-        <div
-          className="rounded-xl p-6 border"
-          style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.08)' }}
-        >
+        {/* GSI Panel */}
+        <Card className="p-6">
           <div className="flex items-center gap-2 mb-4">
-            <BarChart3 className="w-5 h-5 text-cyan-400" />
-            <h2 className="text-lg font-semibold text-white">Global Stress Index (GSI)</h2>
+            <BarChart3 className="w-5 h-5 text-cyan-600" />
+            <h2 className="text-lg font-semibold text-slate-900">Global Stress Index (GSI)</h2>
           </div>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-slate-500">
             The GSI aggregates signals from 100+ intelligence feeds into a unified stress metric.
             Detailed domain-level analysis and early warning indicators are available for each region.
           </p>
-        </div>
+        </Card>
 
-        {/* Early Warning Placeholder */}
-        <div
-          className="rounded-xl p-6 border"
-          style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.08)' }}
-        >
+        {/* Early Warning */}
+        <Card className="p-6">
           <div className="flex items-center gap-2 mb-4">
-            <AlertTriangle className="w-5 h-5 text-amber-400" />
-            <h2 className="text-lg font-semibold text-white">Early Warning Indicators</h2>
+            <AlertTriangle className="w-5 h-5 text-amber-500" />
+            <h2 className="text-lg font-semibold text-slate-900">Early Warning Indicators</h2>
           </div>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-slate-500">
             Domain-specific threat indicators monitoring security, political, economic, climate, narrative, cyber, stability, and health signals.
           </p>
-        </div>
+        </Card>
       </div>
     </div>
   );

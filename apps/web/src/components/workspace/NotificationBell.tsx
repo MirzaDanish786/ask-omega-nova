@@ -68,17 +68,17 @@ export function NotificationBell() {
       </Button>
 
       {open && (
-        <Card className="absolute right-0 mt-2 w-96 z-50 overflow-hidden bg-slate-900/95 backdrop-blur-xl border-slate-700">
+        <Card className="absolute right-0 mt-2 w-96 z-50 overflow-hidden bg-white border-slate-200 shadow-xl">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3">
-            <h3 className="text-sm font-semibold text-white">Notifications</h3>
+            <h3 className="text-sm font-semibold text-slate-900">Notifications</h3>
             {unreadCount > 0 && (
-              <Button variant="link" size="sm" onClick={markAllRead} className="text-blue-400 h-auto p-0">
+              <Button variant="link" size="sm" onClick={markAllRead} className="text-blue-600 h-auto p-0">
                 Mark all read
               </Button>
             )}
           </div>
-          <Separator className="bg-slate-700/50" />
+          <Separator className="bg-slate-200" />
 
           {/* List */}
           <div className="max-h-[400px] overflow-y-auto">
@@ -90,15 +90,15 @@ export function NotificationBell() {
               notifications.slice(0, 20).map(n => (
                 <div
                   key={n.id}
-                  className={`px-4 py-3 border-b border-slate-800/50 hover:bg-white/5 transition-colors ${!n.read ? 'bg-blue-500/5' : ''}`}
+                  className={`px-4 py-3 border-b border-slate-100 hover:bg-slate-50 transition-colors ${!n.read ? 'bg-blue-50/50' : ''}`}
                 >
                   <div className="flex items-start gap-3">
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-slate-200 line-clamp-2">{n.message}</p>
-                      <p className="text-[10px] text-slate-500 mt-1">{formatTime(n.createdAt)}</p>
+                      <p className="text-sm text-slate-700 line-clamp-2">{n.message}</p>
+                      <p className="text-[10px] text-slate-400 mt-1">{formatTime(n.createdAt)}</p>
                     </div>
                     {!n.read && (
-                      <div className="w-2 h-2 rounded-full bg-blue-400 mt-1.5 flex-shrink-0" />
+                      <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
                     )}
                   </div>
                 </div>

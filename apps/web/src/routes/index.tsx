@@ -46,7 +46,7 @@ function OmegaNovaPage() {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [simMode, setSimMode] = useState(true); // SIM mode on by default
+  const [simMode, setSimMode] = useState(true);
 
   const handleSubmit = async () => {
     if (!query.trim() || isSubmitting) return;
@@ -66,12 +66,12 @@ function OmegaNovaPage() {
   };
 
   return (
-    <div className="min-h-full" style={{ background: '#0a0e1a' }}>
+    <div className="min-h-full bg-white">
       <div className="max-w-7xl mx-auto px-4 lg:px-8 py-6 space-y-6">
 
         {/* ===== QUICK INSIGHTS BUTTON ===== */}
         <div>
-          <Button variant="outline" className="gap-2 border-slate-700/50 text-slate-400 hover:text-white hover:bg-white/5">
+          <Button variant="outline" className="gap-2">
             <Plus className="w-4 h-4" />
             Add Quick Insights
           </Button>
@@ -88,7 +88,7 @@ function OmegaNovaPage() {
                 <span
                   className="text-xs font-semibold tracking-[0.15em] uppercase"
                   style={{
-                    background: 'linear-gradient(135deg, #C9A871, #D4B896)',
+                    background: 'linear-gradient(135deg, #92702a, #b8944a)',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
                   }}
@@ -96,7 +96,7 @@ function OmegaNovaPage() {
                   {tag}
                 </span>
                 {idx < CATEGORY_TAGS.length - 1 && (
-                  <span className="text-slate-600 text-xs">•</span>
+                  <span className="text-slate-300 text-xs">•</span>
                 )}
               </span>
             ))}
@@ -108,21 +108,18 @@ function OmegaNovaPage() {
           <div
             className="rounded-2xl p-1 relative"
             style={{
-              background: 'linear-gradient(135deg, rgba(201,168,113,0.2), rgba(201,168,113,0.05), rgba(201,168,113,0.2))',
-              boxShadow: '0 0 40px rgba(201, 168, 113, 0.08)',
+              background: 'linear-gradient(135deg, rgba(146,112,42,0.2), rgba(146,112,42,0.05), rgba(146,112,42,0.2))',
+              boxShadow: '0 0 40px rgba(146, 112, 42, 0.06)',
             }}
           >
-            <div
-              className="rounded-xl p-4"
-              style={{ background: 'rgba(10, 14, 23, 0.95)', backdropFilter: 'blur(20px)' }}
-            >
+            <div className="rounded-xl p-4 bg-white">
               {/* Mode toggles */}
               <div className="flex items-center gap-2 mb-3">
                 <Button
                   variant={simMode ? 'secondary' : 'ghost'}
                   size="sm"
                   onClick={() => setSimMode(true)}
-                  className={`text-xs font-semibold ${simMode ? 'bg-slate-700 text-white' : 'text-slate-500 hover:text-slate-300'}`}
+                  className={`text-xs font-semibold ${simMode ? 'bg-slate-100 text-slate-900' : 'text-slate-400 hover:text-slate-700'}`}
                 >
                   SIM
                 </Button>
@@ -130,7 +127,7 @@ function OmegaNovaPage() {
                   variant={!simMode ? 'secondary' : 'ghost'}
                   size="sm"
                   onClick={() => setSimMode(false)}
-                  className={`text-xs font-semibold ${!simMode ? 'bg-slate-700 text-white' : 'text-slate-500 hover:text-slate-300'}`}
+                  className={`text-xs font-semibold ${!simMode ? 'bg-slate-100 text-slate-900' : 'text-slate-400 hover:text-slate-700'}`}
                 >
                   TA
                 </Button>
@@ -148,14 +145,14 @@ function OmegaNovaPage() {
                 }}
                 placeholder="Ask Omega Nova anything about global geopolitical intelligence..."
                 rows={3}
-                className="w-full bg-transparent text-white text-sm placeholder:text-slate-500 resize-none border-0 shadow-none focus-visible:ring-0"
+                className="w-full bg-transparent text-slate-900 text-sm placeholder:text-slate-400 resize-none border-0 shadow-none focus-visible:ring-0"
               />
 
               {/* Bottom bar */}
               <div className="flex items-center justify-between mt-2">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-slate-600" />
-                  <span className="text-[10px] text-slate-600">Powered by intelligence engines</span>
+                  <Sparkles className="w-4 h-4 text-slate-300" />
+                  <span className="text-[10px] text-slate-400">Powered by intelligence engines</span>
                 </div>
                 <Button
                   variant="outline"
@@ -163,9 +160,9 @@ function OmegaNovaPage() {
                   disabled={!query.trim() || isSubmitting}
                   className="gap-2 disabled:opacity-30 transition-all"
                   style={{
-                    background: query.trim() ? 'rgba(201, 168, 113, 0.2)' : 'rgba(255,255,255,0.05)',
-                    color: query.trim() ? '#C9A871' : '#64748b',
-                    borderColor: query.trim() ? 'rgba(201, 168, 113, 0.3)' : 'rgba(255,255,255,0.1)',
+                    background: query.trim() ? 'rgba(146, 112, 42, 0.1)' : undefined,
+                    color: query.trim() ? '#92702a' : undefined,
+                    borderColor: query.trim() ? 'rgba(146, 112, 42, 0.3)' : undefined,
                   }}
                 >
                   {isSubmitting ? (
@@ -185,15 +182,11 @@ function OmegaNovaPage() {
               <button
                 key={idx}
                 onClick={() => handleExampleClick(prompt)}
-                className="w-full text-left px-4 py-3 rounded-xl text-sm transition-all group"
-                style={{
-                  background: 'rgba(255, 255, 255, 0.03)',
-                  border: '1px solid rgba(255, 255, 255, 0.06)',
-                }}
+                className="w-full text-left px-4 py-3 rounded-xl text-sm transition-all group border border-slate-100 hover:border-slate-200 hover:bg-slate-50"
               >
                 <div className="flex items-start gap-3">
-                  <Sparkles className="w-4 h-4 text-slate-600 mt-0.5 flex-shrink-0 group-hover:text-amber-500/50 transition-colors" />
-                  <span className="text-slate-400 group-hover:text-slate-300 transition-colors">{prompt}</span>
+                  <Sparkles className="w-4 h-4 text-slate-300 mt-0.5 flex-shrink-0 group-hover:text-amber-600/50 transition-colors" />
+                  <span className="text-slate-600 group-hover:text-slate-800 transition-colors">{prompt}</span>
                 </div>
               </button>
             ))}
@@ -206,9 +199,9 @@ function OmegaNovaPage() {
             variant="outline"
             className="gap-2 rounded-xl font-semibold transition-all hover:scale-105"
             style={{
-              background: 'linear-gradient(135deg, rgba(201,168,113,0.15), rgba(201,168,113,0.05))',
-              borderColor: 'rgba(201, 168, 113, 0.25)',
-              color: '#C9A871',
+              background: 'linear-gradient(135deg, rgba(146,112,42,0.08), rgba(146,112,42,0.02))',
+              borderColor: 'rgba(146, 112, 42, 0.25)',
+              color: '#92702a',
             }}
           >
             <Crown className="w-4 h-4" />

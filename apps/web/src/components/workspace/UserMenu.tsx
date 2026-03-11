@@ -56,64 +56,64 @@ export function UserMenu({ user, role }: UserMenuProps) {
       </Button>
 
       {open && (
-        <Card className="absolute right-0 mt-2 w-80 z-50 overflow-hidden bg-slate-950/95 backdrop-blur-xl border-slate-700">
+        <Card className="absolute right-0 mt-2 w-80 z-50 overflow-hidden bg-white border-slate-200 shadow-xl">
           {/* Account header */}
           <div className="px-4 py-4">
-            <p className="text-[9px] uppercase tracking-widest text-slate-500 mb-3">My Account</p>
+            <p className="text-[9px] uppercase tracking-widest text-slate-400 mb-3">My Account</p>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
                 {initial}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-white truncate">{user.name || 'User'}</p>
-                <p className="text-xs text-slate-400 truncate">{user.email}</p>
+                <p className="text-sm font-semibold text-slate-900 truncate">{user.name || 'User'}</p>
+                <p className="text-xs text-slate-500 truncate">{user.email}</p>
               </div>
             </div>
             <div className="mt-2">
-              <Badge variant="outline" className="text-[10px] border-slate-700 text-slate-300 gap-1">
+              <Badge variant="outline" className="text-[10px] border-slate-200 text-slate-600 gap-1">
                 <Crown className="w-3 h-3" />
                 {role}
               </Badge>
             </div>
           </div>
-          <Separator className="bg-slate-700/50" />
+          <Separator className="bg-slate-200" />
 
           {/* My Activities */}
           <Link
             to="/my-activities"
             onClick={() => setOpen(false)}
-            className="flex items-center justify-between px-4 py-3 hover:bg-white/5 transition-colors"
+            className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 transition-colors"
           >
             <div className="flex items-center gap-2.5">
               <BarChart3 className="w-4 h-4 text-slate-400" />
-              <span className="text-sm text-slate-300">My Activities</span>
+              <span className="text-sm text-slate-700">My Activities</span>
             </div>
-            <ChevronRight className="w-4 h-4 text-slate-600" />
+            <ChevronRight className="w-4 h-4 text-slate-400" />
           </Link>
-          <Separator className="bg-slate-800/50" />
+          <Separator className="bg-slate-100" />
 
           {/* Admin tools */}
           {isAdmin && (
             <>
               <div className="px-4 py-2 flex items-center gap-1.5">
                 <Crown className="w-3 h-3 text-amber-500" />
-                <span className="text-[9px] uppercase tracking-widest text-slate-500 font-semibold">Admin Tools</span>
+                <span className="text-[9px] uppercase tracking-widest text-slate-400 font-semibold">Admin Tools</span>
               </div>
               {adminItems.map(item => (
                 <Link
                   key={item.to}
                   to={item.to}
                   onClick={() => setOpen(false)}
-                  className="flex items-center justify-between px-4 py-2.5 hover:bg-purple-500/10 transition-colors group"
+                  className="flex items-center justify-between px-4 py-2.5 hover:bg-purple-50 transition-colors group"
                 >
                   <div className="flex items-center gap-2.5">
-                    <item.icon className="w-4 h-4 text-slate-500 group-hover:text-purple-400 transition-colors" />
-                    <span className="text-sm text-slate-400 group-hover:text-purple-300 transition-colors">{item.label}</span>
+                    <item.icon className="w-4 h-4 text-slate-400 group-hover:text-purple-600 transition-colors" />
+                    <span className="text-sm text-slate-600 group-hover:text-purple-700 transition-colors">{item.label}</span>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-slate-700 group-hover:text-purple-500 transition-colors" />
+                  <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-purple-500 transition-colors" />
                 </Link>
               ))}
-              <Separator className="bg-slate-800/50" />
+              <Separator className="bg-slate-100" />
             </>
           )}
 
@@ -121,15 +121,15 @@ export function UserMenu({ user, role }: UserMenuProps) {
           <Button
             variant="ghost"
             onClick={handleSignOut}
-            className="w-full justify-start gap-2.5 px-4 py-3 h-auto text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-none"
+            className="w-full justify-start gap-2.5 px-4 py-3 h-auto text-red-500 hover:text-red-600 hover:bg-red-50 rounded-none"
           >
             <LogOut className="w-4 h-4" />
             Sign Out
           </Button>
 
-          <Separator className="bg-slate-800/50" />
+          <Separator className="bg-slate-100" />
           <div className="px-4 py-2 text-center">
-            <span className="text-[10px] text-slate-600">Omega Nova v1.0</span>
+            <span className="text-[10px] text-slate-400">Omega Nova v1.0</span>
           </div>
         </Card>
       )}

@@ -18,7 +18,8 @@ export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootLayout,
 });
 
-const PUBLIC_PAGES = ['/login', '/forgot-password', '/reset-password', '/signup', '/verify-email', '/pending-approval'];
+const PUBLIC_PAGES = ['/login', '/forgot-password', '/reset-password', '/signup'];
+const STATUS_PAGES = ['/verify-email', '/pending-approval', '/onboarding'];
 
 const NAV_ITEMS = [
   { to: '/', label: 'OmegaNova', icon: Shield },
@@ -36,20 +37,24 @@ function RootLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isPublicPage = PUBLIC_PAGES.includes(location.pathname);
+  const isStatusPage = STATUS_PAGES.includes(location.pathname);
   const isOnboardingPage = location.pathname === '/onboarding';
+  const isVerifyPage = location.pathname === '/verify-email';
+  const isPendingPage = location.pathname === '/pending-approval';
 
   const [userData, setUserData] = useState<Record<string, unknown> | null>(null);
   const [userLoading, setUserLoading] = useState(false);
 
+  // Always fetch user data for logged-in users (regardless of page)
   useEffect(() => {
-    if (session?.user && !isPublicPage) {
+    if (session?.user) {
       setUserLoading(true);
       api.get<Record<string, unknown>>('/users/me')
         .then(data => setUserData(data))
         .catch(() => {})
         .finally(() => setUserLoading(false));
     }
-  }, [session?.user?.id, isPublicPage]);
+  }, [session?.user?.id]);
 
   // --- Auth guards ---
   if (isPending) {
@@ -60,21 +65,15 @@ function RootLayout() {
     );
   }
 
+  // Not logged in
   if (!session?.user) {
     if (isPublicPage) return <Outlet />;
     navigate({ to: '/login' });
     return null;
   }
 
-  // User is logged in — handle status-based routing
-  const isVerifyPage = location.pathname === '/verify-email';
-  const isPendingPage = location.pathname === '/pending-approval';
-
-  if (isVerifyPage || isPendingPage) return <Outlet />;
-
-  if (isOnboardingPage) return <Outlet />;
-
-  if (userLoading) {
+  // Logged in — wait for user data before making routing decisions
+  if (userLoading || !userData) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -82,28 +81,43 @@ function RootLayout() {
     );
   }
 
-  const userRole = (userData?.role ?? (session.user as Record<string, unknown>).role) as string;
-  const emailVerified = userData?.emailVerified as boolean | undefined;
-  const accountStatus = (userData?.accountStatus ?? 'PENDING') as string;
-  const onboardingCompleted = userData?.onboardingCompleted as boolean | undefined;
+  const userRole = (userData.role ?? (session.user as Record<string, unknown>).role) as string;
+  const emailVerified = userData.emailVerified as boolean | undefined;
+  const accountStatus = (userData.accountStatus ?? 'PENDING') as string;
+  const onboardingCompleted = userData.onboardingCompleted as boolean | undefined;
 
-  // Non-admin users: check email verification first, then approval status
+  // Non-admin users: status-based routing with actual data
   if (userRole !== 'ADMIN') {
+    // Step 1: Email not verified → must verify
     if (emailVerified === false) {
-      navigate({ to: '/verify-email' });
-      return null;
+      if (!isVerifyPage) {
+        navigate({ to: '/verify-email' });
+        return null;
+      }
+      return <Outlet />;
     }
+
+    // Step 2: Account not approved → pending approval screen
     if (accountStatus !== 'APPROVED') {
-      navigate({ to: '/pending-approval' });
-      return null;
+      if (!isPendingPage) {
+        navigate({ to: '/pending-approval' });
+        return null;
+      }
+      return <Outlet />;
     }
+
+    // Step 3: Onboarding not completed → must complete onboarding
     if (onboardingCompleted === false) {
-      navigate({ to: '/onboarding' });
-      return null;
+      if (!isOnboardingPage) {
+        navigate({ to: '/onboarding' });
+        return null;
+      }
+      return <Outlet />;
     }
   }
 
-  if (isPublicPage) {
+  // User is fully approved — redirect away from status/public pages to home
+  if (isPublicPage || isStatusPage) {
     navigate({ to: '/' });
     return null;
   }
