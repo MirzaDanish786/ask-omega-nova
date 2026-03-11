@@ -148,109 +148,97 @@ function RootLayout() {
 
       {/* ===== TOP HEADER BAR ===== */}
       <header
-        className="sticky top-0 z-50 border-b border-white/10"
+        className="sticky top-0 z-50"
         style={{ background: 'linear-gradient(180deg, #1F2A3A 0%, #243044 100%)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          {/* Left: Logo + Nav */}
-          <div className="flex items-center gap-6">
-            {/* Mobile hamburger */}
-            <div className="md:hidden">
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="topnav-item"
-                aria-label="Open menu"
-              >
-                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </button>
+        {/* Row 1: Navigation + My Workspace pill */}
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
+          <div className="h-12 flex items-center justify-between">
+            {/* Left: Mobile hamburger + Nav tabs */}
+            <div className="flex items-center gap-6">
+              <div className="md:hidden">
+                <button
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  className="topnav-item"
+                  aria-label="Open menu"
+                >
+                  {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                </button>
+              </div>
+
+              <nav className="hidden md:flex items-center topnav" style={{ gap: '20px' }}>
+                {NAV_ITEMS.map(item => {
+                  const isActive = item.to === '/'
+                    ? location.pathname === '/'
+                    : location.pathname.startsWith(item.to);
+                  return (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      className={`topnav-item ${isActive ? 'active' : ''}`}
+                    >
+                      <item.icon className="h-4 w-4" />
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </nav>
             </div>
 
-            {/* OmegaNova logo link */}
-            <Link
-              to="/"
-              className={`topnav-item ${location.pathname === '/' ? 'active' : ''}`}
-            >
-              <span className="hidden md:inline-flex items-center justify-center mr-1">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <linearGradient id="navLogoGrad" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-                      <stop offset="0%" stopColor="#00C4CC"/>
-                      <stop offset="100%" stopColor="#7B2FF7"/>
-                    </linearGradient>
-                  </defs>
-                  <circle cx="12" cy="12" r="10" stroke="url(#navLogoGrad)" strokeWidth="2" fill="none"/>
-                  <path d="M15.8 9.2c-.6-1.4-2-2.2-3.8-2.2-2.7 0-4.7 2-4.7 5s2 5 4.7 5c1.8 0 3.2-.8 3.8-2.2" stroke="url(#navLogoGrad)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-                </svg>
-              </span>
-              OmegaNova
-            </Link>
-
-            {/* Desktop nav */}
-            <nav className="hidden md:flex items-center topnav" style={{ gap: '24px' }}>
-              {NAV_ITEMS.filter(item => item.to !== '/').map(item => {
-                const isActive = location.pathname.startsWith(item.to);
-                return (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                    className={`topnav-item ${isActive ? 'active' : ''}`}
-                  >
-                    <item.icon className="h-4 w-4" />
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-
-          {/* Center: Logo + subtitle (visible on xl screens) */}
-          <div className="hidden xl:flex items-center gap-3 absolute left-1/2 -translate-x-1/2">
-            <div className="w-10 h-10 flex items-center justify-center">
-              <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
-                <rect width="40" height="40" rx="8" fill="url(#logo-grad)" />
-                <path d="M12 14h16v3H12zM12 20h16v3H12zM12 26h10v3H12z" fill="white" opacity="0.9" />
-                <defs>
-                  <linearGradient id="logo-grad" x1="0" y1="0" x2="40" y2="40">
-                    <stop stopColor="#06b6d4" />
-                    <stop offset="1" stopColor="#8b5cf6" />
-                  </linearGradient>
-                </defs>
-              </svg>
-            </div>
-            <div>
-              <div className="text-white font-bold text-base leading-tight">OmegaNova</div>
-              <div className="text-slate-400 text-[10px] tracking-wide">Geostrategic Intelligence</div>
-            </div>
-          </div>
-
-          {/* Right: Controls */}
-          <div className="flex items-center gap-2">
-            {/* OGWI Score badge */}
-            <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-600/50 bg-white/5">
-              <span className="text-[10px] text-slate-400 font-medium tracking-wide">OGWI · EW</span>
-              <span className="text-lg font-bold text-white">{ogwiScore.toFixed(2)}</span>
-              <span className={`text-xs font-semibold ${ogwiDelta > 0 ? 'text-red-400' : 'text-emerald-400'}`}>
-                ▲ {ogwiDelta.toFixed(2)}
-              </span>
-            </div>
-
-            {/* Data Sovereignty */}
-            <button className="hidden lg:inline-flex topnav-item" style={{ fontSize: '12px', gap: '6px', color: 'rgba(255,255,255,0.6)' }}>
-              <Shield className="w-3.5 h-3.5" />
-              Data Sovereignty
-            </button>
-
-            <NotificationBell />
-            <UserMenu
-              user={{ name: session.user.name, email: session.user.email, image: session.user.image }}
-              role={userRole}
-            />
-
-            {/* My Workspace pill */}
+            {/* Right: My Workspace pill */}
             <Link to="/my-activities" className="hidden md:inline-flex workspace-pill">
               <span>My Workspace</span>
               <span className="initial-badge">{userInitial}</span>
             </Link>
+          </div>
+        </div>
+
+        {/* Row 2: Branding + OGWI + Controls */}
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
+          <div className="h-16 flex items-center justify-between border-t border-white/[0.06]">
+            {/* Left: Logo + branding */}
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 flex items-center justify-center">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                  <rect width="40" height="40" rx="8" fill="url(#logo-grad)" />
+                  <path d="M12 14h16v3H12zM12 20h16v3H12zM12 26h10v3H12z" fill="white" opacity="0.9" />
+                  <defs>
+                    <linearGradient id="logo-grad" x1="0" y1="0" x2="40" y2="40">
+                      <stop stopColor="#06b6d4" />
+                      <stop offset="1" stopColor="#8b5cf6" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
+              <div>
+                <div className="text-white font-bold text-lg leading-tight">OmegaNova</div>
+                <div className="text-slate-400 text-xs tracking-wide">Geostrategic Intelligence</div>
+              </div>
+            </div>
+
+            {/* Right: OGWI badge + Data Sovereignty + Bell + User */}
+            <div className="flex items-center gap-4">
+              {/* OGWI Score badge */}
+              <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-600/50 bg-white/5">
+                <span className="text-[10px] text-slate-400 font-medium tracking-wide">OGWI · EW</span>
+                <span className="text-xl font-bold text-white">{ogwiScore.toFixed(2)}</span>
+                <span className={`text-xs font-semibold ${ogwiDelta > 0 ? 'text-red-400' : 'text-emerald-400'}`}>
+                  {ogwiDelta > 0 ? '▲' : '▼'} {ogwiDelta.toFixed(2)}
+                </span>
+              </div>
+
+              {/* Data Sovereignty */}
+              <button className="hidden lg:inline-flex topnav-item" style={{ fontSize: '13px', gap: '6px', color: 'rgba(255,255,255,0.6)' }}>
+                <Shield className="w-4 h-4" />
+                Data Sovereignty
+              </button>
+
+              <NotificationBell />
+              <UserMenu
+                user={{ name: session.user.name, email: session.user.email, image: session.user.image }}
+                role={userRole}
+              />
+            </div>
           </div>
         </div>
       </header>
