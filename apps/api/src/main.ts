@@ -4,18 +4,18 @@ import { AppModule } from './app.module.js';
 import { ConfigService } from '@nestjs/config';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter.js';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor.js';
+import { toNodeHandler } from 'better-auth/node';
+import { auth } from './config/auth.js';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   const configService = app.get(ConfigService);
   const port = configService.get<number>('PORT', 3001);
   const frontendUrl = configService.get<string>('FRONTEND_URL', 'http://localhost:5173');
 
-  // Global prefix for all routes
-  app.setGlobalPrefix('api');
-
-  // CORS
+  // CORS — must be before anything else
   app.enableCors({
     origin: [
       frontendUrl,
@@ -26,6 +26,17 @@ async function bootstrap(): Promise<void> {
     ],
     credentials: true,
   });
+
+  // Mount BetterAuth DIRECTLY on Express, BEFORE NestJS global prefix.
+  // This bypasses NestJS routing entirely for auth — BetterAuth handles its own routing.
+  const betterAuthHandler = toNodeHandler(auth);
+  const expressApp = app.getHttpAdapter().getInstance();
+  expressApp.all('/api/auth/*', (req: any, res: any) => {
+    betterAuthHandler(req, res);
+  });
+
+  // Global prefix for all NestJS controller routes
+  app.setGlobalPrefix('api');
 
   // Global filters & interceptors
   app.useGlobalFilters(new HttpExceptionFilter(configService));

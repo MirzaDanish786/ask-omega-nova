@@ -7,6 +7,7 @@ config({ path: resolve(import.meta.dirname, '..', '..', '..', '..', '.env') });
 
 import { AppDataSource } from './data-source.js';
 import {
+  User,
   OgwiHistoricalData,
   CrisisLevel,
   EarlyWarningData,
@@ -15,6 +16,7 @@ import {
   AgentStatus,
 } from '../entities/index.js';
 import { createId } from '../utils/id.js';
+import { auth } from '../config/auth.js';
 
 async function main() {
   await AppDataSource.initialize();
@@ -102,6 +104,28 @@ async function main() {
     }
   }
   console.log('  Seeded 3 agent configs');
+
+  // Seed admin user (if not already exists)
+  const adminEmail = process.env.ADMIN_EMAIL || 'admin@omega-nova.com';
+  const userRepo = AppDataSource.getRepository(User);
+  const existingAdmin = await userRepo.findOne({ where: { email: adminEmail } });
+  if (!existingAdmin) {
+    try {
+      await auth.api.signUpEmail({
+        body: {
+          email: adminEmail,
+          password: 'Admin@1234',
+          name: 'System Admin',
+        },
+      });
+      // databaseHooks auto-promote ADMIN_EMAIL to ADMIN role
+      console.log(`  Seeded admin user: ${adminEmail} (password: Admin@1234)`);
+    } catch (err) {
+      console.log(`  Admin user already exists or creation failed:`, (err as Error).message);
+    }
+  } else {
+    console.log(`  Admin user already exists: ${adminEmail}`);
+  }
 
   console.log('Seeding complete!');
   await AppDataSource.destroy();

@@ -68,12 +68,21 @@ Request → CORS (NestJS) → AuthGuard (BetterAuth session) → RolesGuard → 
 ```
 
 ### Auth Flow
-- BetterAuth mounted as NestJS middleware at `/api/auth/*`
+- BetterAuth mounted DIRECTLY on Express in `main.ts` at `/api/auth/*` (bypasses NestJS routing)
 - Global `AuthGuard` checks session via `auth.api.getSession()` for all routes
 - Routes decorated with `@Public()` skip auth
 - Routes decorated with `@Roles('ADMIN')` require specific role
 - Routes decorated with `@RequireModule('ogwi')` require module access
 - `@CurrentUser()` decorator extracts user from request
+
+### User Creation Flow (Admin-Only — NO Self-Registration)
+- Users CANNOT self-register. There is NO public signup.
+- Only admins can create users via `POST /api/users` (requires ADMIN role).
+- Admin provides: email, password, name, optional role.
+- BetterAuth's `signUpEmail` is called server-side to create the user.
+- The initial admin user is created via `npm run db:seed` (ADMIN_EMAIL env var).
+- After first login, non-admin users complete 4-step onboarding.
+- Login page only has email/password sign-in + forgot password link.
 
 ### Error Handling
 - NestJS built-in exceptions: `NotFoundException`, `ForbiddenException`, `UnauthorizedException`, etc.
@@ -134,10 +143,11 @@ Request → CORS (NestJS) → AuthGuard (BetterAuth session) → RolesGuard → 
 ## API Routes (all under /api prefix)
 ```
 GET    /health                      — Health check (@Public)
-AUTH   /auth/*                      — BetterAuth handles (signup, signin, signout, session, password reset)
+AUTH   /auth/*                      — BetterAuth handles (signin, signout, session, password reset)
 GET    /users/me                    — Current user
-PATCH  /users/me                    — Update profile
+PATCH  /users/me                    — Update profile (incl. onboarding completion)
 GET    /users                       — List all users (ADMIN)
+POST   /users                       — Create new user (ADMIN only — no self-registration)
 PATCH  /users/:id/role              — Update user role (ADMIN)
 PATCH  /users/:id/modules           — Update assigned modules (ADMIN)
 GET    /ogwi/current                — Current OGWI score (requires ogwi module)

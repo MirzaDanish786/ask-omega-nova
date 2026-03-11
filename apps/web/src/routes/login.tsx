@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Navigate, Link } from '@tanstack/react-router';
 import { useState } from 'react';
-import { signIn, signUp, useSession } from '../lib/auth-client';
-import { Shield, Loader2, Lock, Mail, User, Eye, EyeOff } from 'lucide-react';
+import { signIn, useSession } from '../lib/auth-client';
+import { Shield, Loader2, Lock, Mail, Eye, EyeOff } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,10 +14,8 @@ export const Route = createFileRoute('/login')({
 function LoginPage() {
   const navigate = useNavigate();
   const { data: session, isPending } = useSession();
-  const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -38,18 +36,10 @@ function LoginPage() {
     setLoading(true);
 
     try {
-      if (isSignUp) {
-        const result = await signUp.email({ email, password, name });
-        if (result.error) {
-          setError(result.error.message ?? 'Sign up failed');
-          return;
-        }
-      } else {
-        const result = await signIn.email({ email, password });
-        if (result.error) {
-          setError(result.error.message ?? 'Sign in failed');
-          return;
-        }
+      const result = await signIn.email({ email, password });
+      if (result.error) {
+        setError(result.error.message ?? 'Sign in failed');
+        return;
       }
       navigate({ to: '/' });
     } catch (err) {
@@ -75,7 +65,7 @@ function LoginPage() {
               Omega Nova
             </h1>
             <p className="text-muted-foreground text-sm mt-1.5">
-              {isSignUp ? 'Create your secure account' : 'Strategic Command Access'}
+              Strategic Command Access
             </p>
           </CardHeader>
 
@@ -87,23 +77,6 @@ function LoginPage() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              {isSignUp && (
-                <div className="space-y-1.5">
-                  <Label className="text-slate-300">Full Name</Label>
-                  <div className="relative">
-                    <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2 z-10" />
-                    <Input
-                      type="text"
-                      value={name}
-                      onChange={e => setName(e.target.value)}
-                      required={isSignUp}
-                      className="pl-10 bg-slate-800/50 border-slate-600/50 text-white placeholder:text-slate-500 focus-visible:ring-blue-500/50"
-                      placeholder="Enter your full name"
-                    />
-                  </div>
-                </div>
-              )}
-
               <div className="space-y-1.5">
                 <Label className="text-slate-300">Email Address</Label>
                 <div className="relative">
@@ -151,45 +124,25 @@ function LoginPage() {
                 {loading ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    {isSignUp ? 'Creating account...' : 'Authenticating...'}
+                    Authenticating...
                   </>
                 ) : (
                   <>
                     <Shield className="w-4 h-4" />
-                    {isSignUp ? 'Create Account' : 'Access System'}
+                    Access System
                   </>
                 )}
               </Button>
             </form>
           </CardContent>
 
-          <CardFooter className="flex-col gap-4 pt-0">
-            {/* Divider */}
-            <div className="flex items-center gap-3 w-full">
-              <div className="flex-1 h-px bg-slate-700/50" />
-              <span className="text-xs text-slate-500 uppercase tracking-wider">or</span>
-              <div className="flex-1 h-px bg-slate-700/50" />
-            </div>
-
-            {/* Footer links */}
-            <div className="flex items-center justify-between w-full">
-              <Link
-                to="/forgot-password"
-                className="text-sm text-slate-400 hover:text-blue-400 transition-colors"
-              >
-                Forgot password?
-              </Link>
-              <button
-                onClick={() => { setIsSignUp(!isSignUp); setError(''); }}
-                className="text-sm text-slate-400 hover:text-white transition-colors"
-              >
-                {isSignUp ? (
-                  <>Have an account? <span className="font-semibold text-blue-400">Sign in</span></>
-                ) : (
-                  <>Need an account? <span className="font-semibold text-blue-400">Sign up</span></>
-                )}
-              </button>
-            </div>
+          <CardFooter className="justify-center pt-0">
+            <Link
+              to="/forgot-password"
+              className="text-sm text-slate-400 hover:text-blue-400 transition-colors"
+            >
+              Forgot password?
+            </Link>
           </CardFooter>
         </Card>
 

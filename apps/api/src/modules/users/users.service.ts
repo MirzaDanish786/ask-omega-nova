@@ -1,7 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User, UserRole } from '../../entities/index.js';
+import { auth } from '../../config/auth.js';
 
 const USER_SELECT_COLUMNS: (keyof User)[] = [
   'id', 'email', 'emailVerified', 'name', 'image', 'role',
@@ -69,5 +70,42 @@ export class UsersService {
 
   async count(): Promise<number> {
     return this.repo.count();
+  }
+
+  /**
+   * Admin-only: create a new user via BetterAuth's signup API.
+   * Users cannot self-register — only admins can create accounts.
+   */
+  async createUser(data: {
+    email: string;
+    password: string;
+    name: string;
+    role?: UserRole;
+  }): Promise<User> {
+    // Check if user already exists
+    const existing = await this.repo.findOne({ where: { email: data.email } });
+    if (existing) {
+      throw new BadRequestException('A user with this email already exists');
+    }
+
+    // Create user via BetterAuth (handles password hashing, account creation, etc.)
+    const result = await auth.api.signUpEmail({
+      body: {
+        email: data.email,
+        password: data.password,
+        name: data.name,
+      },
+    });
+
+    if (!result?.user) {
+      throw new BadRequestException('Failed to create user');
+    }
+
+    // Update role if specified (BetterAuth creates with default VIEWER role)
+    if (data.role && data.role !== 'VIEWER') {
+      await this.repo.update(result.user.id, { role: data.role });
+    }
+
+    return this.getById(result.user.id);
   }
 }
