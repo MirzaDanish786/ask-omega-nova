@@ -1,6 +1,6 @@
 # Omega Nova - Daily Progress Tracker
 
-## Current Status: Steps 1-12 Complete, Migrated from Prisma to TypeORM
+## Current Status: NestJS Migration Complete (Milestone 1 in Progress)
 
 ## Completed
 ### 2026-03-09 (Session 1)
@@ -103,13 +103,42 @@ Move to the next module — choose from: OGWI dashboard frontend, Simulations, o
 - [x] Updated CLAUDE.md, package.json scripts, turbo.json
 - [x] Full monorepo typecheck passes (4/4 tasks, zero errors)
 
+### 2026-03-11 (Session 5) — Express → NestJS Migration
+- [x] Created git branch `express-backup` to preserve Express code
+- [x] Backed up Express source to `apps/api/src-express-backup/`
+- [x] Scaffolded NestJS app (main.ts, app.module.ts)
+- [x] BetterAuth mounted as NestJS middleware at `/api/auth/*`
+- [x] Created global guards: AuthGuard (BetterAuth session), RolesGuard, ModuleGuard
+- [x] Created custom decorators: @Public, @Roles, @RequireModule, @CurrentUser
+- [x] Created HttpExceptionFilter and LoggingInterceptor
+- [x] Ported all 9 business modules to NestJS:
+  - UsersModule, OgwiModule, SimulationsModule, EarlyWarningModule
+  - KnowledgeModule, AgentsModule, NotificationsModule, AdminModule
+  - SchedulerModule (@nestjs/schedule replaces node-cron)
+- [x] All 14 TypeORM entities preserved unchanged
+- [x] TypeScript compiles with zero errors
+- [x] Updated CLAUDE.md for NestJS architecture
+- [x] Removed Express-only deps (cors, helmet, express-rate-limit, node-cron)
+- [x] Added NestJS deps (@nestjs/core, common, config, typeorm, throttler, schedule, platform-express)
+
 ## Architecture Decisions
 - Turborepo monorepo with npm workspaces
-- Controller → Service → Repository → TypeORM pattern
+- NestJS Module → Controller → Service → TypeORM pattern
 - TypeORM entities with decorators, synchronize in dev mode
-- BetterAuth for authentication (session-based)
+- BetterAuth for authentication (session-based, mounted as NestJS middleware)
 - TanStack Router for type-safe frontend routing
-- Zod for runtime validation on API boundaries
+- Zod for env validation, NestJS guards for RBAC
+- @nestjs/schedule for cron jobs (replaces node-cron)
+
+## Milestone 1 Remaining Work
+- [ ] Test NestJS backend with Docker PostgreSQL (verify all endpoints)
+- [ ] Redis + BullMQ setup for simulation job queue
+- [ ] Verify frontend auth works with NestJS backend
+- [ ] Pixel-perfect UI matching old project
+- [ ] Vercel deployment for frontend
+- [ ] Backend deployment (TBD)
+- [ ] Secrets management (.env per environment)
+- [ ] Dev + staging environments live
 
 ## Blockers
 None currently.
