@@ -1,5 +1,7 @@
 import { Injectable, NotFoundException, ForbiddenException, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 import { Repository } from 'typeorm';
 import { Simulation, type SimulationStatus } from '../../entities/index.js';
 import { UsersService } from '../users/users.service.js';
@@ -7,6 +9,7 @@ import { KnowledgeService } from '../knowledge/knowledge.service.js';
 import { OgwiService } from '../ogwi/ogwi.service.js';
 import { openai, ASSISTANT_ID } from '../../config/openai.js';
 import { createId } from '../../utils/id.js';
+import type { SimulationJobData } from './simulation.processor.js';
 
 @Injectable()
 export class SimulationsService {
@@ -16,6 +19,7 @@ export class SimulationsService {
     private readonly usersService: UsersService,
     private readonly kbService: KnowledgeService,
     private readonly ogwiService: OgwiService,
+    @InjectQueue('simulations') private readonly simulationQueue: Queue,
   ) {}
 
   async getById(id: string): Promise<Simulation> {
@@ -50,9 +54,17 @@ export class SimulationsService {
     });
     const sim = await this.repo.save(entity);
 
-    // Run async
-    this.runSimulation(sim.id, query, userId, user.role).catch(err => {
-      console.error('Simulation run failed:', err);
+    // Enqueue for background processing via BullMQ
+    await this.simulationQueue.add('run-simulation', {
+      simId: sim.id,
+      query,
+      userId,
+      userRole: user.role,
+    } satisfies SimulationJobData, {
+      attempts: 2,
+      backoff: { type: 'exponential', delay: 5000 },
+      removeOnComplete: 100,
+      removeOnFail: 200,
     });
 
     await this.usersService.incrementSimCount(userId);
@@ -89,7 +101,7 @@ export class SimulationsService {
     return this.repo.count();
   }
 
-  private async runSimulation(simId: string, query: string, userId: string, userRole: string): Promise<void> {
+  async runSimulation(simId: string, query: string, userId: string, userRole: string): Promise<void> {
     try {
       await this.repo.update(simId, { status: 'RUNNING' as SimulationStatus });
 

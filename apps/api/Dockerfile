@@ -17,9 +17,6 @@ RUN npm install
 COPY packages/shared/ ./packages/shared/
 COPY apps/api/ ./apps/api/
 
-# Generate Prisma client
-RUN cd apps/api && npx prisma generate
-
 # Build shared package and API
 RUN npx turbo build --filter=@omega-nova/api
 
@@ -39,20 +36,15 @@ COPY apps/api/package.json ./apps/api/
 RUN npm install --omit=dev
 
 # Copy built shared package
-COPY --from=builder /app/packages/shared/ ./packages/shared/
+COPY --from=builder /app/packages/shared/dist/ ./packages/shared/dist/
+COPY --from=builder /app/packages/shared/package.json ./packages/shared/package.json
 
 # Copy built API
 COPY --from=builder /app/apps/api/dist/ ./apps/api/dist/
-COPY --from=builder /app/apps/api/prisma/ ./apps/api/prisma/
-
-# Copy generated Prisma client
-COPY --from=builder /app/apps/api/node_modules/.prisma/ ./apps/api/node_modules/.prisma/
-COPY --from=builder /app/node_modules/.prisma/ ./node_modules/.prisma/
 
 ENV NODE_ENV=production
 ENV PORT=3001
 
 EXPOSE 3001
 
-# Run migrations then start
-CMD ["sh", "-c", "cd apps/api && npx prisma migrate deploy && cd /app && node apps/api/dist/index.js"]
+CMD ["node", "apps/api/dist/main.js"]

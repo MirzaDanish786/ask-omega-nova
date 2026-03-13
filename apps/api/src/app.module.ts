@@ -13,6 +13,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 import { AdminModule } from './modules/admin/admin.module.js';
 import { SchedulerModule } from './modules/scheduler/scheduler.module.js';
 import { EmailModule } from './modules/email/email.module.js';
+import { BullConfigModule } from './config/bull.module.js';
 import { HealthController } from './health.controller.js';
 import { envValidation } from './config/env.validation.js';
 import {
@@ -67,6 +68,7 @@ import {
 
     // Global modules
     EmailModule,
+    BullConfigModule,
 
     // Feature modules
     AuthModule,

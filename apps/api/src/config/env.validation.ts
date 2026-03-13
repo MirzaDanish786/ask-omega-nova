@@ -10,6 +10,8 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   FRONTEND_URL: z.string().url().default('http://localhost:5173'),
   ADMIN_EMAIL: z.string().email().default('admin@omega-nova.com'),
+  // Redis (optional — defaults to localhost for dev)
+  REDIS_URL: z.string().url().default('redis://localhost:6379'),
   // SMTP (optional — if not set, emails are logged to console)
   SMTP_HOST: z.string().optional().default(''),
   SMTP_PORT: z.coerce.number().optional().default(587),

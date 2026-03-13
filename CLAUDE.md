@@ -6,17 +6,20 @@
 - **Frontend**: React + Vite + TypeScript (`apps/web`)
 - **Shared**: Types, constants, utils (`packages/shared` → `@omega-nova/shared`)
 - **Database**: PostgreSQL + TypeORM
+- **Queue**: Redis + BullMQ (simulation job queue via `@nestjs/bullmq`)
 - **Auth**: BetterAuth with PostgreSQL (session-based, mounted as NestJS middleware)
 
 ## Current Milestone: M1 — Foundation & Infrastructure (9 days)
-- NestJS backend with BetterAuth auth (login, register, session management)
-- PostgreSQL connected + schema migrated
-- Redis configured for simulation job queue (ready for Phase 2)
-- Secrets management — no credentials exposed
-- React + Vite frontend shell deployed to Vercel
-- Full design system replicated (pixel-perfect match to old project)
-- Auth flow working end-to-end (frontend → backend → database)
-- Dev and staging environments live
+- ✅ NestJS backend with BetterAuth auth (login, register, session management)
+- ✅ PostgreSQL connected + schema migrated (14 entities, TypeORM synchronize)
+- ✅ Redis + BullMQ configured for simulation job queue
+- ✅ Secrets management — no credentials exposed (Zod-validated env)
+- ✅ React + Vite frontend shell (21 routes, TanStack Router, design system)
+- ✅ Full design system replicated (dark military theme, shadcn/ui)
+- ✅ Auth flow working end-to-end (signup → OTP → approval → onboarding → dashboard)
+- ✅ CI/CD pipeline (GitHub Actions: typecheck + build)
+- ⚠️ Vercel deployment config pending
+- ⚠️ Staging environment setup pending
 
 ## Code Style
 - **TypeScript strict mode** everywhere
@@ -139,7 +142,7 @@ Request → CORS (NestJS) → AuthGuard (BetterAuth session) → RolesGuard → 
 - `npm run dev` — Start all apps in dev mode (NestJS API on 3001, Vite on 5173)
 - `npm run build` — Build all packages
 - `cd apps/api && npm run db:seed` — Seed database
-- `docker-compose up postgres` — Start PostgreSQL only
+- `docker-compose up postgres redis` — Start PostgreSQL + Redis for dev
 - `cd apps/api && npx tsc --noEmit` — Type-check backend
 
 ## API Routes (all under /api prefix)

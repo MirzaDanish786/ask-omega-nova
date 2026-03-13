@@ -11,6 +11,7 @@
     "db:seed": "node --import @swc-node/register/esm-register src/database/seed.ts"
   },
   "dependencies": {
+    "@nestjs/bullmq": "^11.0.4",
     "@nestjs/common": "^11.1.16",
     "@nestjs/config": "^4.0.3",
     "@nestjs/core": "^11.1.16",
@@ -20,7 +21,9 @@
     "@nestjs/typeorm": "^11.0.0",
     "@omega-nova/shared": "*",
     "better-auth": "1.4.21",
+    "bullmq": "^5.71.0",
     "express": "^4.21.0",
+    "ioredis": "^5.10.0",
     "nodemailer": "^8.0.2",
     "openai": "^4.80.0",
     "pg": "^8.20.0",

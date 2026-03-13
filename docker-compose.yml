@@ -16,6 +16,19 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7-alpine
+    container_name: omega-nova-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   api:
     build:
       context: .
@@ -23,12 +36,15 @@ services:
     container_name: omega-nova-api
     environment:
       DATABASE_URL: postgresql://omega:omega_secret@postgres:5432/omega_nova?schema=public
+      REDIS_URL: redis://redis:6379
       NODE_ENV: production
       PORT: 3001
     ports:
       - "3001:3001"
     depends_on:
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
 
   web:
@@ -43,3 +59,4 @@ services:
 
 volumes:
   postgres_data:
+  redis_data:
